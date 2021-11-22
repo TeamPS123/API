@@ -114,7 +114,6 @@ namespace API_DACN.Model
                 }
                 else if(data.Count() > 1)
                 {
-
                     data = from m in data
                            group m by m.Id into g
                            select g.FirstOrDefault();
@@ -167,7 +166,10 @@ namespace API_DACN.Model
                 foreach (var item in data)
                 {
                     double distance1 = Distance.distance(item.LongLat, lngLat);
-                    restaurants.Add(objectRes(item, distance1.ToString()));
+                    if(distance1 <= 5)
+                    {
+                        restaurants.Add(objectRes(item, distance1.ToString()));
+                    }
                 }
 
                 return restaurants;
