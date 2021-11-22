@@ -62,7 +62,14 @@ namespace API_DACN.Model
                                 closeTime = a.CloseTime,
                                 distance = "Không xác định",
                                 pic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId == "0").Select(c => c.Link).ToList(),
-                                categoryRes = (List<string>)a.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name),
+                               categoryRes = from b in db.RestaurantDetails
+                                             where b.RestaurantId == a.Id
+                                             select new Object.Get.GetCategoryRes()
+                                             {
+                                                 id = b.CategoryId,
+                                                 name = b.Category.Name,
+                                                 icon = b.Category.icon
+                                             }
                            }; 
                 }
                 List<Object.Get.GetRestaurant> restaurants = new List<Object.Get.GetRestaurant>();
@@ -145,7 +152,14 @@ namespace API_DACN.Model
                                closeTime = a.CloseTime,
                                distance = "Không xác định",
                                pic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId == "0").Select(c => c.Link).ToList(),
-                               categoryRes = (List<string>)a.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name),
+                               categoryRes = from b in db.RestaurantDetails
+                                             where b.RestaurantId == a.Id
+                                             select new Object.Get.GetCategoryRes()
+                                             {
+                                                 id = b.CategoryId,
+                                                 name = b.Category.Name,
+                                                 icon = b.Category.icon
+                                             }
                            };
                 }
                 List<Object.Get.GetRestaurant> restaurants = new List<Object.Get.GetRestaurant>();
@@ -162,6 +176,125 @@ namespace API_DACN.Model
             {
                 return null;
             }
+        }
+
+        //Restaurant list with categoryRes List
+        public IEnumerable<Object.Get.GetRestaurant> resResWithCategorys(List<int> categoryResList, LngLat lngLat)
+        {
+            try
+            {
+                List<Object.Get.GetRestaurant> restaurantList = new List<Object.Get.GetRestaurant>();
+
+                var result = from a in db.RestaurantDetails
+                                where a.Restaurant.Status == true && categoryResList.Contains(a.CategoryId) == true 
+                                select a.Restaurant;
+
+                foreach (var item1 in result)
+                {
+                    double distance1 = Distance.distance(item1.LongLat, lngLat);
+                    restaurantList.Add(objectRes(item1, distance1.ToString()));
+                }
+
+                var t = from a in restaurantList
+                        group a by a.restaurantId into g
+                        select g.FirstOrDefault();
+
+                return t;
+            }
+            catch(Exception ex)
+            {
+                string i = ex.Message;
+                return null;
+            }
+        }
+
+        //Restaurant list with district List
+        public IEnumerable<Object.Get.GetRestaurant> resResWithDistricts(List<string> districtList, LngLat lngLat)
+        {
+            try
+            {
+                List<Object.Get.GetRestaurant> restaurantList = new List<Object.Get.GetRestaurant>();
+
+                var result = from a in db.Restaurants
+                                where a.Status == true && districtList.Contains(a.District) == true
+                                select a;
+
+                foreach (var item1 in result)
+                {
+                    double distance1 = Distance.distance(item1.LongLat, lngLat);
+                    restaurantList.Add(objectRes(item1, distance1.ToString()));
+                }
+
+                var t = from a in restaurantList
+                        group a by a.restaurantId into g
+                        select g.FirstOrDefault();
+
+                return t;
+            }
+            catch (Exception ex)
+            {
+                string i = ex.Message;
+                return null;
+            }
+        }
+
+        //Restaurant list with categoryRes List and district List
+        public IEnumerable<Object.Get.GetRestaurant> getResWithCategorysAndDistricts(List<int> categoryResList, List<string> districtList, LngLat lngLat)
+        {
+            try
+            {
+                List<Object.Get.GetRestaurant> restaurantList = new List<Object.Get.GetRestaurant>();
+
+                var result = from a in db.RestaurantDetails
+                                      where a.Restaurant.Status == true && categoryResList.Contains(a.CategoryId) == true
+                                      select a.Restaurant;
+
+                foreach (var item1 in result)
+                {
+                    double distance1 = Distance.distance(item1.LongLat, lngLat);
+                    restaurantList.Add(objectRes(item1, distance1.ToString()));
+                }
+
+                var h = from a in restaurantList
+                        where districtList.Contains(a.district) == true
+                        select a;
+
+                var t = from a in h
+                        group a by a.restaurantId into g
+                        select g.FirstOrDefault();
+
+                return t;
+            }
+            catch (Exception ex)
+            {
+                string i = ex.Message;
+                return null;
+            }
+        }
+
+        //catelory list with GetRestaurant
+        public IEnumerable<Object.Get.GetCategoryRes> categoryResList(IEnumerable<Object.Get.GetRestaurant> restaurants)
+        {
+            List<Object.Get.GetCategoryRes> categoryRes = new List<Object.Get.GetCategoryRes>();
+            foreach(var item in restaurants)
+            {
+                foreach(var item1 in item.categoryRes)
+                {
+                    categoryRes.Add(item1);
+                }
+            }
+
+            return from a in categoryRes
+                   group a by a.id into g
+                   select g.FirstOrDefault();
+        }
+
+        //district list with GetRestaurant
+        public IEnumerable<string> districtList(IEnumerable<Object.Get.GetRestaurant> restaurants)
+        {
+            return from a in restaurants
+                   group a by a.district into g
+                   select g.FirstOrDefault().district;
         }
 
         //Restaurant list with food
@@ -227,7 +360,14 @@ namespace API_DACN.Model
                 closeTime = item.CloseTime,
                 distance = distance,
                 pic = db.Images.Where(t => t.RestaurantId == item.Id && t.FoodId == "0").Select(c => c.Link).ToList(),
-                categoryRes = (List<string>)item.RestaurantDetails.Where(t => t.RestaurantId == item.Id).Select(c => c.Category.Name),
+                categoryRes = from b in db.RestaurantDetails
+                              where b.RestaurantId == item.Id
+                              select new Object.Get.GetCategoryRes()
+                              {
+                                  id = b.CategoryId,
+                                  name = b.Category.Name,
+                                  icon = b.Category.icon
+                              }
             };
         }
     }

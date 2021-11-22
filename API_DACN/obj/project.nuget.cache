@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "/EPQn+F0pTMzCsHEZwYYcu0vTVOkbD9fbBkXIHZGILwrADbW89iYtNwSPZR+Evtyek8EiuzNi1IuGF8DHButeA==",
+  "dgSpecHash": "4i/Y8oHzrrDrXDxUIi4ONy6660S3GMBXgvjTRz9ThSEpTpQlSeZE5S7CJZk5a0XQiIg9tg7Mxbi2qSxeA5Q3rQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\xyzsy\\Desktop\\API_DACN\\API_DACN\\API_DACN.csproj",
+  "projectFilePath": "C:\\Users\\xyzsy\\Desktop\\API\\API_DACN\\API_DACN.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\xyzsy\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\xyzsy\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\5.0.11\\microsoft.aspnetcore.authentication.jwtbearer.5.0.11.nupkg.sha512",

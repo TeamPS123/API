@@ -26,16 +26,18 @@ namespace API_DACN.Controllers
         {
             if(location.distance > 20 || location.distance < 5)
             {
-                return Ok(new Object.Get.Message_ResList(2, "Phạm vi tìm kiếm từ 5km đến 20km", null));
+                return Ok(new Object.Get.Message_ResList(2, "Phạm vi tìm kiếm từ 5km đến 20km", null, null, null));
             }
 
             var result = model.resList(new Other.LngLat(location.lon, location.lat), location.distance);
+            var result1 = model.categoryResList(result);
+            var result2 = model.districtList(result);
 
             if (result == null)
             {
-                return Ok(new Object.Get.Message_ResList(0, "Lấy dữ liệu thất bại", null));
+                return Ok(new Object.Get.Message_ResList(0, "Lấy dữ liệu thất bại", null, null, null));
             }
-            return Ok(new Object.Get.Message_ResList(1, "Lấy dữ liệu thành công", result));
+            return Ok(new Object.Get.Message_ResList(1, "Lấy dữ liệu thành công", result, result1, result2));
         }
 
         [HttpPost]
@@ -43,12 +45,14 @@ namespace API_DACN.Controllers
         public IActionResult getAllRestaurantWithDistrict(Object.Input.InputRes_District area)
         {
             var result = model.resListWithDistrict(area.district, new Other.LngLat(area.lon, area.lat));
+            var result1 = model.categoryResList(result);
+            var result2 = model.districtList(result);
 
             if (result == null)
             {
-                return Ok(new Object.Get.Message_ResList(0, "Lấy dữ liệu thất bại", null));
+                return Ok(new Object.Get.Message_ResList(0, "Lấy dữ liệu thất bại", null, null, null));
             }
-            return Ok(new Object.Get.Message_ResList(1, "Lấy dữ liệu thành công", result));
+            return Ok(new Object.Get.Message_ResList(1, "Lấy dữ liệu thành công", result, result1, result2));
         }
 
         [HttpPost]
@@ -56,12 +60,60 @@ namespace API_DACN.Controllers
         public IActionResult resListSearch(Object.Input.InputRes_Search input)
         {
             var result = model.resListSearch(input.name, new Other.LngLat(input.lon, input.lat));
+            var result1 = model.categoryResList(result);
+            var result2 = model.districtList(result);
 
             if (result == null)
             {
-                return Ok(new Object.Get.Message_ResList(0, "Lấy dữ liệu thất bại", null));
+                return Ok(new Object.Get.Message_ResList(0, "Lấy dữ liệu thất bại", null, null, null));
             }
-            return Ok(new Object.Get.Message_ResList(1, "Lấy dữ liệu thành công", result));
+            return Ok(new Object.Get.Message_ResList(1, "Lấy dữ liệu thành công", result, result1, result2));
+        }
+
+        [HttpPost]
+        [Route("getResWithCategorys")]
+        public IActionResult getResWithCategorys(Object.Input.InputRes_CategoryList input)
+        {
+            var result = model.resResWithCategorys(input.catelogyList, new Other.LngLat(input.lon, input.lat));
+            var result1 = model.categoryResList(result);
+            var result2 = model.districtList(result);
+
+            if (result == null)
+            {
+                return Ok(new Object.Get.Message_ResList(0, "Lấy dữ liệu thất bại", null, null, null));
+            }
+            return Ok(new Object.Get.Message_ResList(1, "Lấy dữ liệu thành công", result, result1, result2));
+        }
+
+        [HttpPost]
+        [Route("getResWithDistricts")]
+        public IActionResult getResWithDistricts(Object.Input.InputRes_DistrictList input)
+        {
+            var result = model.resResWithDistricts(input.districtList, new Other.LngLat(input.lon, input.lat));
+
+            if (result == null)
+            {
+                return Ok(new Object.Get.Message_ResList(0, "Lấy dữ liệu thất bại", null, null, null));
+            }
+            var result1 = model.categoryResList(result);
+            var result2 = model.districtList(result);
+
+            return Ok(new Object.Get.Message_ResList(1, "Lấy dữ liệu thành công", result, result1, result2));
+        }
+
+        [HttpPost]
+        [Route("getResWithCategorysAndDistricts")]
+        public IActionResult getResWithCategorysAndDistricts(Object.Input.InputRes_CategoryListAndDistrictList input)
+        {
+            var result = model.getResWithCategorysAndDistricts(input.catelogyList, input.districtList, new Other.LngLat(input.lon, input.lat));
+            var result1 = model.categoryResList(result);
+            var result2 = model.districtList(result);
+
+            if (result == null)
+            {
+                return Ok(new Object.Get.Message_ResList(0, "Lấy dữ liệu thất bại", null, null, null));
+            }
+            return Ok(new Object.Get.Message_ResList(1, "Lấy dữ liệu thành công", result, result1, result2));
         }
 
         //[HttpPost]

@@ -14,6 +14,7 @@ namespace API_DACN.Controllers
     public class MainController : ControllerBase
     {
         private RestaurantModel model;
+        private SearchModel modelSearch;
 
         public MainController(food_location_dbContext db)
         {
@@ -51,12 +52,27 @@ namespace API_DACN.Controllers
         public IActionResult getAllRestaurant()
         {
             var result = model.restaurantList();
+            var result1 = modelSearch.categoryResList(result);
+            var result2 = modelSearch.districtList(result);
 
             if (result == null)
             {
-                return Ok(new Object.Get.Message_ResList(0, "Lấy dữ liệu thất bại", null));
+                return Ok(new Object.Get.Message_ResList(0, "Lấy dữ liệu thất bại", null, null, null));
             }
-            return Ok(new Object.Get.Message_ResList(1, "Lấy dữ liệu thành công", result));
+            return Ok(new Object.Get.Message_ResList(1, "Lấy dữ liệu thành công", result, result1, result2));
+        }
+
+        [HttpGet]
+        [Route("getAllCategoryRes")]
+        public IActionResult getAllCategoryRes()
+        {
+            var result = model.categoryList();
+
+            if (result == null)
+            {
+                return Ok(new Object.Get.Message_CategoryResList(0, "Lấy dữ liệu thất bại", null));
+            }
+            return Ok(new Object.Get.Message_CategoryResList(1, "Lấy dữ liệu thành công", result));
         }
 
         [HttpGet]

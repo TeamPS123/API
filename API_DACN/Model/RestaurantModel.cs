@@ -72,7 +72,7 @@ namespace API_DACN.Model
             try
             {
                 var result = from a in db.Restaurants
-                             where a.Id == restaurantId
+                             where a.Id == restaurantId && a.Status == true
                              select new Object.Get.GetRestaurant()
                              {
                                  restaurantId = restaurantId,
@@ -86,7 +86,14 @@ namespace API_DACN.Model
                                  pic = (List<string>)(from b in db.Images
                                                       where b.RestaurantId == restaurantId && b.FoodId != "0"
                                                       select b.Link),
-                                 categoryRes = (List<string>) a.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name),
+                                 categoryRes = from b in db.RestaurantDetails
+                                               where b.RestaurantId == a.Id
+                                               select new Object.Get.GetCategoryRes()
+                                               {
+                                                   id = b.CategoryId,
+                                                   name = b.Category.Name,
+                                                   icon = b.Category.icon
+                                               }
                              };
 
                 return result.FirstOrDefault();
@@ -102,7 +109,7 @@ namespace API_DACN.Model
             try
             {
                 var result = from a in db.Promotions
-                             where a.Id == promotionId
+                             where a.Id == promotionId && a.Restaurant.Status == true
                              select new Object.Get.GetRestaurant()
                              {
                                  restaurantId = a.RestaurantId,
@@ -116,7 +123,14 @@ namespace API_DACN.Model
                                  pic = (List<string>)(from b in db.Images
                                                       where b.RestaurantId == a.Restaurant.Id && b.FoodId != "0"
                                                       select b.Link),
-                                 categoryRes = (List<string>)a.Restaurant.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name),
+                                 categoryRes = from b in db.RestaurantDetails
+                                               where b.RestaurantId == a.Id
+                                               select new Object.Get.GetCategoryRes()
+                                               {
+                                                   id = b.CategoryId,
+                                                   name = b.Category.Name,
+                                                   icon = b.Category.icon
+                                               }
                              };
 
                 return result.FirstOrDefault();
@@ -132,6 +146,7 @@ namespace API_DACN.Model
             try
             {
                 var result = from a in db.Restaurants
+                             where a.Status == true
                              select new Object.Get.GetRestaurant()
                              {
                                  restaurantId = a.Id,
@@ -145,7 +160,14 @@ namespace API_DACN.Model
                                  pic = (List<string>)(from b in db.Images
                                                       where b.RestaurantId == a.Id && b.FoodId == "0"
                                                       select b.Link),
-                                 categoryRes = (List<string>)a.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name),
+                                 categoryRes = from b in db.RestaurantDetails
+                                               where b.RestaurantId == a.Id
+                                               select new Object.Get.GetCategoryRes()
+                                               {
+                                                   id = b.CategoryId,
+                                                   name = b.Category.Name,
+                                                   icon = b.Category.icon
+                                               }
                              };
 
                 return result;
@@ -270,6 +292,27 @@ namespace API_DACN.Model
                 return "null";
             }
             return categoryId;
+        }
+
+        //----------------------------categoryRES----------------------------------
+        public IEnumerable<Object.Get.GetCategoryRes> categoryList()
+        {
+            try
+            {
+                var result = from a in db.CategoryRestaurants
+                             select new Object.Get.GetCategoryRes()
+                             {
+                                 id = a.Id,
+                                 name = a.Name,
+                                 icon = a.icon,
+                             };
+
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         //------------------------------food-----------------------------------

@@ -51,4 +51,26 @@ namespace API_DACN.Object.Input
         public double lon { get; set; }
         public double lat { get; set; }
     }
+
+    public class InputRes_CategoryList
+    {
+        public List<int> catelogyList { get; set; }
+        public double lon { get; set; }
+        public double lat { get; set; }
+    }
+
+    public class InputRes_DistrictList
+    {
+        public List<string> districtList { get; set; }
+        public double lon { get; set; }
+        public double lat { get; set; }
+    }
+
+    public class InputRes_CategoryListAndDistrictList
+    {
+        public List<int> catelogyList { get; set; }
+        public List<string> districtList { get; set; }
+        public double lon { get; set; }
+        public double lat { get; set; }
+    }
 }

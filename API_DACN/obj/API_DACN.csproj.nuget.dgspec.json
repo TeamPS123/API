@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\xyzsy\\Desktop\\API_DACN\\API_DACN\\API_DACN.csproj": {}
+    "C:\\Users\\xyzsy\\Desktop\\API\\API_DACN\\API_DACN.csproj": {}
   },
   "projects": {
-    "C:\\Users\\xyzsy\\Desktop\\API_DACN\\API_DACN\\API_DACN.csproj": {
+    "C:\\Users\\xyzsy\\Desktop\\API\\API_DACN\\API_DACN.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\xyzsy\\Desktop\\API_DACN\\API_DACN\\API_DACN.csproj",
+        "projectUniqueName": "C:\\Users\\xyzsy\\Desktop\\API\\API_DACN\\API_DACN.csproj",
         "projectName": "API_DACN",
-        "projectPath": "C:\\Users\\xyzsy\\Desktop\\API_DACN\\API_DACN\\API_DACN.csproj",
+        "projectPath": "C:\\Users\\xyzsy\\Desktop\\API\\API_DACN\\API_DACN.csproj",
         "packagesPath": "C:\\Users\\xyzsy\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\xyzsy\\Desktop\\API_DACN\\API_DACN\\obj\\",
+        "outputPath": "C:\\Users\\xyzsy\\Desktop\\API\\API_DACN\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\xyzsy\\AppData\\Roaming\\NuGet\\NuGet.Config",

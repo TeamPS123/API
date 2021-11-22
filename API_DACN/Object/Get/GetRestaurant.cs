@@ -17,7 +17,7 @@ namespace API_DACN.Object.Get
         public string closeTime { get; set; }
         public string distance { get; set; }
         public List<string> pic { get; set; }
-        public List<string> categoryRes { get; set; }
+        public IEnumerable<GetCategoryRes> categoryRes { get; set; }
     }
 
     public class Message_Res
@@ -43,16 +43,29 @@ namespace API_DACN.Object.Get
         private int status;
         private string notification;
         private IEnumerable<GetRestaurant> resList;
+        private IEnumerable<GetCategoryRes> categoryList;
+        private IEnumerable<string> districtList;
 
-        public Message_ResList(int status, string notification, IEnumerable<GetRestaurant> resList)
+        //public Message_ResList(int status, string notification, IEnumerable<GetRestaurant> resList)
+        //{
+        //    this.status = status;
+        //    this.notification = notification;
+        //    this.resList = resList;
+        //}
+
+        public Message_ResList(int status, string notification, IEnumerable<GetRestaurant> resList, IEnumerable<GetCategoryRes> categoryList, IEnumerable<string> districtList)
         {
             this.status = status;
             this.notification = notification;
             this.resList = resList;
+            this.categoryList = categoryList;
+            this.districtList = districtList;
         }
 
         public int Status { get => status; set => status = value; }
         public string Notification { get => notification; set => notification = value; }
         public IEnumerable<GetRestaurant> ResList { get => resList; set => resList = value; }
+        public IEnumerable<GetCategoryRes> CategoryList { get => categoryList; set => categoryList = value; }
+        public IEnumerable<string> DistrictList { get => districtList; set => districtList = value; }
     }
 }
