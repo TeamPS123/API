@@ -75,6 +75,7 @@ namespace API_DACN.Model
                              where a.Id == restaurantId
                              select new Object.Get.GetRestaurant()
                              {
+                                 restaurantId = restaurantId,
                                  name = a.Name,
                                  line = a.Line,
                                  city = a.City,
@@ -104,6 +105,7 @@ namespace API_DACN.Model
                              where a.Id == promotionId
                              select new Object.Get.GetRestaurant()
                              {
+                                 restaurantId = a.RestaurantId,
                                  name = a.Restaurant.Name,
                                  line = a.Restaurant.Line,
                                  city = a.Restaurant.City,
