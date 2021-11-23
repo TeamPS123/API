@@ -19,6 +19,8 @@ namespace API_DACN.Database
         public string RestaurantId { get; set; }
         public string PromotionId { get; set; }
         public string UserId { get; set; }
+        public string Name { get; set; }
+        public string PhoneNumber { get; set; }
 
         public virtual Promotion Promotion { get; set; }
         public virtual User User { get; set; }

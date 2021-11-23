@@ -12,5 +12,7 @@ namespace API_DACN.Object.Input
         public string restaurantId { get; set; }
         public string promotionId { get; set; }
         public string userId { get; set; }
+        public string name { get; set; }
+        public string phone { get; set; }
     }
 }

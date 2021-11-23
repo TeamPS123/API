@@ -33,6 +33,8 @@ namespace API_DACN.Model
                     RestaurantId = input.restaurantId,
                     PromotionId = input.promotionId,
                     UserId = input.userId,
+                    Name = input.name,
+                    PhoneNumber = input.phone
                 };
                 db.ReserveTables.Add(reserve);
                 db.SaveChanges();
