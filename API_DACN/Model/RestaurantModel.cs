@@ -83,9 +83,20 @@ namespace API_DACN.Model
                                  longLat = a.LongLat,
                                  openTime = a.OpenTime,
                                  closeTime = a.CloseTime,
+                                 phoneRes = a.PhoneRestaurant,
                                  pic = (List<string>)(from b in db.Images
                                                       where b.RestaurantId == restaurantId && b.FoodId != "0"
                                                       select b.Link),
+                                 categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()), 
+                                 promotionRes = from c in db.Promotions
+                                                where c.RestaurantId == a.Id
+                                                select new Object.Get.GetPromotion_Res()
+                                                {
+                                                    id = c.Id,
+                                                    name = c.Name,
+                                                    info = c.Info,
+                                                    value = c.Value
+                                                },
                                  categoryRes = from b in db.RestaurantDetails
                                                where b.RestaurantId == a.Id
                                                select new Object.Get.GetCategoryRes()
@@ -120,11 +131,22 @@ namespace API_DACN.Model
                                  longLat = a.Restaurant.LongLat,
                                  openTime = a.Restaurant.OpenTime,
                                  closeTime = a.Restaurant.CloseTime,
+                                 phoneRes = a.Restaurant.PhoneRestaurant,
                                  pic = (List<string>)(from b in db.Images
                                                       where b.RestaurantId == a.Restaurant.Id && b.FoodId != "0"
                                                       select b.Link),
+                                 categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.RestaurantId).Select(c => c.Category.Name).ToList()),
+                                 promotionRes = from c in db.Promotions
+                                                where c.RestaurantId == a.RestaurantId
+                                                select new Object.Get.GetPromotion_Res()
+                                                {
+                                                    id = c.Id,
+                                                    name = c.Name,
+                                                    info = c.Info,
+                                                    value = c.Value
+                                                },
                                  categoryRes = from b in db.RestaurantDetails
-                                               where b.RestaurantId == a.Id
+                                               where b.RestaurantId == a.RestaurantId
                                                select new Object.Get.GetCategoryRes()
                                                {
                                                    id = b.CategoryId,
@@ -157,9 +179,20 @@ namespace API_DACN.Model
                                  longLat = a.LongLat,
                                  openTime = a.OpenTime,
                                  closeTime = a.CloseTime,
+                                 phoneRes = a.PhoneRestaurant,
                                  pic = (List<string>)(from b in db.Images
-                                                      where b.RestaurantId == a.Id && b.FoodId == "0"
+                                                      where b.RestaurantId == a.Id && b.FoodId != "0"
                                                       select b.Link),
+                                 categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
+                                 promotionRes = from c in db.Promotions
+                                                where c.RestaurantId == a.Id
+                                                select new Object.Get.GetPromotion_Res()
+                                                {
+                                                    id = c.Id,
+                                                    name = c.Name,
+                                                    info = c.Info,
+                                                    value = c.Value
+                                                },
                                  categoryRes = from b in db.RestaurantDetails
                                                where b.RestaurantId == a.Id
                                                select new Object.Get.GetCategoryRes()
@@ -223,8 +256,9 @@ namespace API_DACN.Model
                              where a.Id == menuId
                              select new Object.Get.GetMenu()
                              {
+                                 menuId = a.Id,
                                  name = a.Name,
-                                 foods = from b in a.Foods
+                                 foodList = from b in a.Foods
                                          where b.MenuId == menuId
                                          select new Object.Get.FoodOfMenu()
                                          {
@@ -254,7 +288,38 @@ namespace API_DACN.Model
                              {
                                  menuId = a.Id,
                                  name = a.Name,
-                                 foods = from b in a.Foods
+                                 foodList = from b in a.Foods
+                                         where b.MenuId == a.Id
+                                         select new Object.Get.FoodOfMenu()
+                                         {
+                                             foodId = b.Id,
+                                             name = b.Name,
+                                             price = b.Price,
+                                             pic = (List<string>)(from c in db.Images
+                                                                  where c.FoodId == b.Id
+                                                                  select c.Link)
+                                         }
+                             };
+
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public IEnumerable<Object.Get.GetMenu> menuListWithRes(string restaurantId)
+        {
+            try
+            {
+                var result = from a in db.Menus
+                             where a.RestaurantId == restaurantId
+                             select new Object.Get.GetMenu()
+                             {
+                                 menuId = a.Id,
+                                 name = a.Name,
+                                 foodList = from b in a.Foods
                                          where b.MenuId == a.Id
                                          select new Object.Get.FoodOfMenu()
                                          {

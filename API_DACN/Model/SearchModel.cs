@@ -51,18 +51,29 @@ namespace API_DACN.Model
                     return from a in db.Restaurants
                            where a.District == district && a.Status == true
                            select new Object.Get.GetRestaurant()
-                            {
+                           {
                                restaurantId = a.Id,
                                name = a.Name,
-                                line = a.Line,
-                                city = a.City,
-                                district = a.District,
-                                longLat = a.LongLat,
-                                openTime = a.OpenTime,
-                                closeTime = a.CloseTime,
-                                distance = "Không xác định",
-                                pic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId == "0").Select(c => c.Link).ToList(),
-                               categoryRes = from b in db.RestaurantDetails
+                               line = a.Line,
+                               city = a.City,
+                               district = a.District,
+                               longLat = a.LongLat,
+                               openTime = a.OpenTime,
+                               closeTime = a.CloseTime,
+                               distance = "Không xác định",
+                               phoneRes = a.PhoneRestaurant,
+                               pic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId != "0").Select(c => c.Link).ToList(),
+                               categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
+                               promotionRes = from c in db.Promotions
+                                              where c.RestaurantId == a.Id
+                                              select new Object.Get.GetPromotion_Res()
+                                              {
+                                                  id = c.Id,
+                                                  name = c.Name,
+                                                  info = c.Info,
+                                                  value = c.Value
+                                              },
+                                categoryRes = from b in db.RestaurantDetails
                                              where b.RestaurantId == a.Id
                                              select new Object.Get.GetCategoryRes()
                                              {
@@ -108,11 +119,7 @@ namespace API_DACN.Model
                            select c.Menu.Restaurant;
                 }
 
-                if(data.Count() == 0)
-                {
-                    return null;
-                }
-                else if(data.Count() > 1)
+                if(data.Count() > 1)
                 {
                     data = from m in data
                            group m by m.Id into g
@@ -150,7 +157,18 @@ namespace API_DACN.Model
                                openTime = a.OpenTime,
                                closeTime = a.CloseTime,
                                distance = "Không xác định",
-                               pic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId == "0").Select(c => c.Link).ToList(),
+                               phoneRes = a.PhoneRestaurant,
+                               pic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId != "0").Select(c => c.Link).ToList(),
+                               categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
+                               promotionRes = from c in db.Promotions
+                                              where c.RestaurantId == a.Id
+                                              select new Object.Get.GetPromotion_Res()
+                                              {
+                                                  id = c.Id,
+                                                  name = c.Name,
+                                                  info = c.Info,
+                                                  value = c.Value
+                                              },
                                categoryRes = from b in db.RestaurantDetails
                                              where b.RestaurantId == a.Id
                                              select new Object.Get.GetCategoryRes()
@@ -361,7 +379,18 @@ namespace API_DACN.Model
                 openTime = item.OpenTime,
                 closeTime = item.CloseTime,
                 distance = distance,
-                pic = db.Images.Where(t => t.RestaurantId == item.Id && t.FoodId == "0").Select(c => c.Link).ToList(),
+                phoneRes = item.PhoneRestaurant,
+                pic = db.Images.Where(t => t.RestaurantId == item.Id && t.FoodId != "0").Select(c => c.Link).ToList(),
+                categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == item.Id).Select(c => c.Category.Name).ToList()),
+                promotionRes = from c in db.Promotions
+                               where c.RestaurantId == item.Id
+                               select new Object.Get.GetPromotion_Res()
+                               {
+                                   id = c.Id,
+                                   name = c.Name,
+                                   info = c.Info,
+                                   value = c.Value
+                               },
                 categoryRes = from b in db.RestaurantDetails
                               where b.RestaurantId == item.Id
                               select new Object.Get.GetCategoryRes()

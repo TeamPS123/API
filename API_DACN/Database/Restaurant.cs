@@ -24,6 +24,7 @@ namespace API_DACN.Database
         public bool Status { get; set; }
         public string OpenTime { get; set; }
         public string CloseTime { get; set; }
+        public string PhoneRestaurant { get; set; }
 
         public virtual User User { get; set; }
         public virtual ICollection<Menu> Menus { get; set; }

@@ -16,7 +16,10 @@ namespace API_DACN.Object.Get
         public string openTime { get; set; }
         public string closeTime { get; set; }
         public string distance { get; set; }
+        public string phoneRes { get; set; }
         public List<string> pic { get; set; }
+        public string categoryResStr { get; set; }
+        public IEnumerable<GetPromotion_Res> promotionRes { get; set; }
         public IEnumerable<GetCategoryRes> categoryRes { get; set; }
     }
 
@@ -67,5 +70,13 @@ namespace API_DACN.Object.Get
         public IEnumerable<GetRestaurant> ResList { get => resList; set => resList = value; }
         public IEnumerable<GetCategoryRes> CategoryList { get => categoryList; set => categoryList = value; }
         public IEnumerable<string> DistrictList { get => districtList; set => districtList = value; }
+    }
+
+    public class GetPromotion_Res
+    {
+        public string id { get; set; }
+        public string name { get; set; }
+        public string info { get; set; }
+        public string value { get; set; }
     }
 }

@@ -102,6 +102,19 @@ namespace API_DACN.Controllers
         }
 
         [HttpGet]
+        [Route("getAllMenuWithRes")]
+        public IActionResult getAllMenuWithRes(string restaurantId)
+        {
+            var result = model.menuListWithRes(restaurantId);
+
+            if (result == null)
+            {
+                return Ok(new Object.Get.Message_MenuList(0, "Lấy dữ liệu thất bại", null));
+            }
+            return Ok(new Object.Get.Message_MenuList(1, "Lấy dữ liệu thành công", result));
+        }
+
+        [HttpGet]
         [Route("getFood")]
         public IActionResult getFood(string foodId)
         {

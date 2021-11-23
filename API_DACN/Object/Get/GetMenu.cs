@@ -9,7 +9,7 @@ namespace API_DACN.Object.Get
     {
         public string menuId { get; set; }
         public string name { get; set; }
-        public IEnumerable<FoodOfMenu> foods { get; set; }
+        public IEnumerable<FoodOfMenu> foodList { get; set; }
     }
 
     public class FoodOfMenu
