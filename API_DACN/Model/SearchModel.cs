@@ -62,7 +62,8 @@ namespace API_DACN.Model
                                closeTime = a.CloseTime,
                                distance = "Không xác định",
                                phoneRes = a.PhoneRestaurant,
-                               pic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId != "0").Select(c => c.Link).ToList(),
+                               mainPic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
+                               pic = GetImage.getImageWithRes(a.Id, db),
                                categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
                                promotionRes = from c in db.Promotions
                                               where c.RestaurantId == a.Id
@@ -158,7 +159,8 @@ namespace API_DACN.Model
                                closeTime = a.CloseTime,
                                distance = "Không xác định",
                                phoneRes = a.PhoneRestaurant,
-                               pic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId != "0").Select(c => c.Link).ToList(),
+                               mainPic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
+                               pic = GetImage.getImageWithRes(a.Id, db),
                                categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
                                promotionRes = from c in db.Promotions
                                               where c.RestaurantId == a.Id
@@ -193,6 +195,131 @@ namespace API_DACN.Model
                 return restaurants;
             }
             catch(Exception ex)
+            {
+                return null;
+            }
+        }
+
+        //Restaurant list with category and food
+        public IEnumerable<Object.Get.GetRestaurant> resListSearch1(List<int> catelogyList, List<string> districtList, string name, LngLat lngLat)
+        {
+            try
+            {
+                IEnumerable<Restaurant> data = new List<Restaurant>();
+
+                if (name != string.Empty)
+                {
+                    // Search category name. if data is null, will search food name
+                    data = from b in db.Foods
+                           where b.Category.Name.ToUpper().Contains(name.ToUpper()) && b.Menu.Restaurant.Status == true
+                           select b.Menu.Restaurant;
+
+                    if (data.Count() == 0)
+                    {
+                        data = from c in db.Foods
+                               where c.Name.ToUpper().Contains(name.ToUpper()) && c.Menu.Restaurant.Status == true
+                               select c.Menu.Restaurant;
+                    }
+
+                    if (catelogyList.Count() > 0)
+                    {
+                        var resDetails = from a in db.RestaurantDetails
+                                         where data.Select(t => t.Id).Contains(a.RestaurantId) == true
+                                         select a;
+
+                        //Search by categoryResList when name is not null
+                        data = from a in resDetails
+                               where catelogyList.Contains(a.CategoryId) == true
+                               select a.Restaurant;
+                    }
+                }
+                else if (catelogyList.Count() > 0)
+                {
+                    //Search by categoryResList when name is null
+                    data = from a in db.RestaurantDetails
+                           where a.Restaurant.Status == true && catelogyList.Contains(a.CategoryId) == true
+                           select a.Restaurant;
+                }
+
+                if (data.Count() < 1)
+                {
+                    if (districtList.Count() > 0)
+                    {
+                        //Search by districtList when data is null
+                        data = from a in db.Restaurants
+                               where a.Status == true && districtList.Contains(a.District) == true
+                               select a;
+                    }
+                }
+                else
+                {
+                    if (districtList.Count() > 0)
+                    {
+                        //Search by districtList when data is not null
+                        data = from a in data
+                               where districtList.Contains(a.District) == true
+                               select a;
+                    }
+                }
+
+                if (data.Count() > 1)
+                {
+                    data = from m in data
+                           group m by m.Id into g
+                           select g.FirstOrDefault();
+                }
+
+                if (lngLat.Latitude == 0)
+                {
+                    return from a in data
+                           select new Object.Get.GetRestaurant()
+                           {
+                               restaurantId = a.Id,
+                               name = a.Name,
+                               line = a.Line,
+                               city = a.City,
+                               district = a.District,
+                               longLat = a.LongLat,
+                               openTime = a.OpenTime,
+                               closeTime = a.CloseTime,
+                               distance = "Không xác định",
+                               phoneRes = a.PhoneRestaurant,
+                               mainPic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
+                               pic = GetImage.getImageWithRes(a.Id, db),
+                               categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
+                               promotionRes = from c in db.Promotions
+                                              where c.RestaurantId == a.Id
+                                              select new Object.Get.GetPromotion_Res()
+                                              {
+                                                  id = c.Id,
+                                                  name = c.Name,
+                                                  info = c.Info,
+                                                  value = c.Value
+                                              },
+                               categoryRes = from b in db.RestaurantDetails
+                                             where b.RestaurantId == a.Id
+                                             select new Object.Get.GetCategoryRes()
+                                             {
+                                                 id = b.CategoryId,
+                                                 name = b.Category.Name,
+                                                 icon = b.Category.icon
+                                             }
+                           };
+                }
+                List<Object.Get.GetRestaurant> restaurants = new List<Object.Get.GetRestaurant>();
+
+                foreach (var item in data)
+                {
+                    double distance1 = Distance.distance(item.LongLat, lngLat);
+                    if (distance1 <= 5)
+                    {
+                        restaurants.Add(objectRes(item, distance1.ToString()));
+                    }
+                }
+
+                return restaurants;
+            }
+            catch (Exception ex)
             {
                 return null;
             }
@@ -380,7 +507,8 @@ namespace API_DACN.Model
                 closeTime = item.CloseTime,
                 distance = distance,
                 phoneRes = item.PhoneRestaurant,
-                pic = db.Images.Where(t => t.RestaurantId == item.Id && t.FoodId != "0").Select(c => c.Link).ToList(),
+                mainPic = db.Images.Where(t => t.RestaurantId == item.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
+                pic = GetImage.getImageWithRes(item.Id, db),
                 categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == item.Id).Select(c => c.Category.Name).ToList()),
                 promotionRes = from c in db.Promotions
                                where c.RestaurantId == item.Id

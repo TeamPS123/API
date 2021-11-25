@@ -18,7 +18,56 @@ namespace API_DACN.Model
             setId = new NextId(db);
         }
 
-        //status => chờ xác nhận || 1: xác nhận || 2: quá hạn
+        public IEnumerable<Object.Get.GetReserveTable> getReserveTables (string userId, LngLat lngLat)
+        {
+            return from reserveTable in db.ReserveTables
+                   where reserveTable.UserId == userId
+                   select new Object.Get.GetReserveTable()
+                   {
+                       Id = reserveTable.Id,
+                       quantity = reserveTable.QuantityPeople,
+                       time = reserveTable.Time,
+                       promotionId = reserveTable.PromotionId,
+                       name = reserveTable.Name,
+                       phone = reserveTable.PhoneNumber,
+                       note = reserveTable.note,
+                       restaurant = (from b in db.Restaurants
+                                     where b.Id == reserveTable.RestaurantId
+                                     select new Object.Get.GetRestaurant()
+                                     {
+                                         restaurantId = b.Id,
+                                         name = b.Name,
+                                         line = b.Line,
+                                         city = b.City,
+                                         district = b.District,
+                                         longLat = b.LongLat,
+                                         openTime = b.OpenTime,
+                                         closeTime = b.CloseTime,
+                                         distance = Distance.distance(b.LongLat, lngLat).ToString(),
+                                         phoneRes = b.PhoneRestaurant,
+                                         mainPic = db.Images.Where(t => t.RestaurantId == b.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
+                                         pic = GetImage.getImageWithRes(b.Id, db),
+                                         categoryResStr = Other.Convert.ConvertListToString(b.RestaurantDetails.Select(c => c.Category.Name).ToList()),
+                                         promotionRes = from c in b.Promotions
+                                                        select new Object.Get.GetPromotion_Res()
+                                                        {
+                                                            id = c.Id,
+                                                            name = c.Name,
+                                                            info = c.Info,
+                                                            value = c.Value
+                                                        },
+                                         categoryRes = from d in b.RestaurantDetails
+                                                       select new Object.Get.GetCategoryRes()
+                                                       {
+                                                           id = d.CategoryId,
+                                                           name = d.Category.Name,
+                                                           icon = d.Category.icon
+                                                       }
+                                     }).FirstOrDefault()
+                   };
+        }
+
+        //status => chờ xác nhận || 1: xác nhận || 2: hủy || 3: quá hạn
         public string ReserveTable(Object.Input.InputReserveTable input)
         {
             try
@@ -34,7 +83,8 @@ namespace API_DACN.Model
                     PromotionId = input.promotionId,
                     UserId = input.userId,
                     Name = input.name,
-                    PhoneNumber = input.phone
+                    PhoneNumber = input.phone,
+                    note = input.note
                 };
                 db.ReserveTables.Add(reserve);
                 db.SaveChanges();

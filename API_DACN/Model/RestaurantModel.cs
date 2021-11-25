@@ -84,9 +84,8 @@ namespace API_DACN.Model
                                  openTime = a.OpenTime,
                                  closeTime = a.CloseTime,
                                  phoneRes = a.PhoneRestaurant,
-                                 pic = (List<string>)(from b in db.Images
-                                                      where b.RestaurantId == restaurantId && b.FoodId != "0"
-                                                      select b.Link),
+                                 mainPic = db.Images.Where(t => t.RestaurantId == restaurantId && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
+                                 pic = GetImage.getImageWithRes(restaurantId, db),
                                  categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()), 
                                  promotionRes = from c in db.Promotions
                                                 where c.RestaurantId == a.Id
@@ -132,9 +131,8 @@ namespace API_DACN.Model
                                  openTime = a.Restaurant.OpenTime,
                                  closeTime = a.Restaurant.CloseTime,
                                  phoneRes = a.Restaurant.PhoneRestaurant,
-                                 pic = (List<string>)(from b in db.Images
-                                                      where b.RestaurantId == a.Restaurant.Id && b.FoodId != "0"
-                                                      select b.Link),
+                                 mainPic = db.Images.Where(t => t.RestaurantId == a.RestaurantId && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
+                                 pic = GetImage.getImageWithRes(a.RestaurantId, db),
                                  categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.RestaurantId).Select(c => c.Category.Name).ToList()),
                                  promotionRes = from c in db.Promotions
                                                 where c.RestaurantId == a.RestaurantId
@@ -180,9 +178,8 @@ namespace API_DACN.Model
                                  openTime = a.OpenTime,
                                  closeTime = a.CloseTime,
                                  phoneRes = a.PhoneRestaurant,
-                                 pic = (List<string>)(from b in db.Images
-                                                      where b.RestaurantId == a.Id && b.FoodId != "0"
-                                                      select b.Link),
+                                 mainPic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
+                                 pic = GetImage.getImageWithRes(a.Id, db),
                                  categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
                                  promotionRes = from c in db.Promotions
                                                 where c.RestaurantId == a.Id

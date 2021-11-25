@@ -25,6 +25,23 @@ namespace API_DACN.Controllers
             token = new Other.Token(config, db);
         }
 
+        [Route("getAllReserverTable")]
+        [HttpPost]
+        public IActionResult getAllReserverTable(Object.Input.InputGetReserveTable input)
+        {
+            if (token.GetPhoneWithToken(Request.Headers) != input.userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+            var result = userModel.getReserveTables(input.userId, new Other.LngLat(input.lon, input.lat));
+
+            if (result == null)
+            {
+                return Ok(new Object.Get.Message_ReserveTable(0, "Lấy dữ liệu thất bại", null));
+            }
+            return Ok(new Object.Get.Message_ReserveTable(1, "Lấy dữ liệu thành công", result));
+        }
+
         [Route("reserveTable")]
         [HttpPost]
         public IActionResult ReserveTable(Object.Input.InputReserveTable input)

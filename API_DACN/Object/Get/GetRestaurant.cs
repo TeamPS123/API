@@ -17,6 +17,7 @@ namespace API_DACN.Object.Get
         public string closeTime { get; set; }
         public string distance { get; set; }
         public string phoneRes { get; set; }
+        public string mainPic { get; set; }
         public List<string> pic { get; set; }
         public string categoryResStr { get; set; }
         public IEnumerable<GetPromotion_Res> promotionRes { get; set; }

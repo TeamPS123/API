@@ -74,6 +74,22 @@ namespace API_DACN.Controllers
         }
 
         [HttpPost]
+        [Route("getResWithSearch1")]
+        public IActionResult resListSearch1(Object.Input.InputRes_Search input)
+        {
+            var result = model.resListSearch1(input.catelogyList, input.districtList,input.name, new Other.LngLat(input.lon, input.lat));
+
+            if (result == null)
+            {
+                return Ok(new Object.Get.Message_ResList(0, "Lấy dữ liệu thất bại", null, null, null));
+            }
+            var result1 = model.categoryResList(result);
+            var result2 = model.districtList(result);
+
+            return Ok(new Object.Get.Message_ResList(1, "Lấy dữ liệu thành công", result, result1, result2));
+        }
+
+        [HttpPost]
         [Route("getResWithCategorys")]
         public IActionResult getResWithCategorys(Object.Input.InputRes_CategoryList input)
         {

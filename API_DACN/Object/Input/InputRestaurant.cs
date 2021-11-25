@@ -47,6 +47,8 @@ namespace API_DACN.Object.Input
 
     public class InputRes_Search
     {
+        public List<int> catelogyList { get; set; }
+        public List<string> districtList { get; set; }
         public string name { get; set; }
         public double lon { get; set; }
         public double lat { get; set; }
