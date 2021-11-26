@@ -201,72 +201,79 @@ namespace API_DACN.Model
         }
 
         //Restaurant list with category and food
-        public IEnumerable<Object.Get.GetRestaurant> resListSearch1(List<int> catelogyList, List<string> districtList, string name, LngLat lngLat)
+        public IEnumerable<Object.Get.GetRestaurant> resListSupperSearch(List<int> catelogyList, List<string> districtList, string name, LngLat lngLat)
         {
             try
             {
-                IEnumerable<Restaurant> data = new List<Restaurant>();
+                //IEnumerable<Restaurant> data = null;
+                List<Restaurant> data = new List<Restaurant>();
 
-                if (name != string.Empty)
+                if (name != "")
                 {
                     // Search category name. if data is null, will search food name
-                    data = from b in db.Foods
+                    data = (from b in db.Foods
                            where b.Category.Name.ToUpper().Contains(name.ToUpper()) && b.Menu.Restaurant.Status == true
-                           select b.Menu.Restaurant;
+                           select b.Menu.Restaurant).ToList();
 
                     if (data.Count() == 0)
                     {
-                        data = from c in db.Foods
+                        data = (from c in db.Foods
                                where c.Name.ToUpper().Contains(name.ToUpper()) && c.Menu.Restaurant.Status == true
-                               select c.Menu.Restaurant;
+                               select c.Menu.Restaurant).ToList();
                     }
 
+                    if (districtList.Count() > 0 && data.Count() > 0)
+                    {
+                        //Search by districtList when data is not null
+                        data = (from a in data
+                               where districtList.Contains(a.District) == true
+                               select a).ToList();
+                    }
+                }
+                else if (districtList.Count() > 0)
+                {
+                    //Search by districtList when data is null
+                    data = (from a in db.Restaurants
+                           where a.Status == true && districtList.Contains(a.District) == true
+                           select a).ToList();
+                }
+
+                if (name == "" && districtList.Count() == 0)
+                {
                     if (catelogyList.Count() > 0)
+                    {
+                        //Search by categoryResList when name is null
+                        data = (from a in db.RestaurantDetails
+                               where a.Restaurant.Status == true && catelogyList.Contains(a.CategoryId) == true
+                               select a.Restaurant).ToList();
+                    }
+                }
+                else
+                {
+                    if (catelogyList.Count() > 0 && data.Count() > 0)
                     {
                         var resDetails = from a in db.RestaurantDetails
                                          where data.Select(t => t.Id).Contains(a.RestaurantId) == true
                                          select a;
 
                         //Search by categoryResList when name is not null
-                        data = from a in resDetails
+                        data = (from a in resDetails
                                where catelogyList.Contains(a.CategoryId) == true
-                               select a.Restaurant;
+                               select a.Restaurant).ToList();
+
                     }
-                }
-                else if (catelogyList.Count() > 0)
-                {
-                    //Search by categoryResList when name is null
-                    data = from a in db.RestaurantDetails
-                           where a.Restaurant.Status == true && catelogyList.Contains(a.CategoryId) == true
-                           select a.Restaurant;
                 }
 
-                if (data.Count() < 1)
+                if (data.Count() == 0)
                 {
-                    if (districtList.Count() > 0)
-                    {
-                        //Search by districtList when data is null
-                        data = from a in db.Restaurants
-                               where a.Status == true && districtList.Contains(a.District) == true
-                               select a;
-                    }
-                }
-                else
-                {
-                    if (districtList.Count() > 0)
-                    {
-                        //Search by districtList when data is not null
-                        data = from a in data
-                               where districtList.Contains(a.District) == true
-                               select a;
-                    }
+                    return null;
                 }
 
                 if (data.Count() > 1)
                 {
-                    data = from m in data
+                    data = (from m in data
                            group m by m.Id into g
-                           select g.FirstOrDefault();
+                           select g.FirstOrDefault()).ToList();
                 }
 
                 if (lngLat.Latitude == 0)
@@ -306,6 +313,7 @@ namespace API_DACN.Model
                                              }
                            };
                 }
+
                 List<Object.Get.GetRestaurant> restaurants = new List<Object.Get.GetRestaurant>();
 
                 foreach (var item in data)

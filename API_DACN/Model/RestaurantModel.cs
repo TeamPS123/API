@@ -35,6 +35,7 @@ namespace API_DACN.Model
                 r.Status = true;
                 r.OpenTime = restaurant.openTime;
                 r.CloseTime = restaurant.closeTime;
+                r.PhoneRestaurant = restaurant.phone;
                 db.Restaurants.Add(r);
                 db.SaveChanges();
             }
@@ -208,6 +209,24 @@ namespace API_DACN.Model
             }
         }
 
+        public IEnumerable<Object.Get.GetReserveTable1> getAllReserverTableByRestaurantId(string restaurantId)
+        {
+            return from reserveTable in db.ReserveTables
+                   where reserveTable.RestaurantId == restaurantId
+                   select new Object.Get.GetReserveTable1()
+                   {
+                       restaurantId = reserveTable.Id,
+                       quantity = reserveTable.QuantityPeople,
+                       time = reserveTable.Time,
+                       reserveTableId = reserveTable.RestaurantId,
+                       promotionId = reserveTable.PromotionId,
+                       name = reserveTable.Name,
+                       phone = reserveTable.PhoneNumber,
+                       note = reserveTable.note,
+                       userId = reserveTable.UserId
+                   };
+        }
+
         //------------------------------menu-----------------------------------
         public string CreateMenu(Object.Input.InputMenu menu)
         {
@@ -259,9 +278,12 @@ namespace API_DACN.Model
                                          where b.MenuId == menuId
                                          select new Object.Get.FoodOfMenu()
                                          {
+                                             menuId = a.Id,
                                              foodId = b.Id,
                                              name = b.Name,
                                              price = b.Price,
+                                             unit = b.Unit,
+                                             categoryName = b.Category.Name,
                                              pic = (List<string>)(from c in db.Images
                                                                   where c.FoodId == b.Id
                                                                   select c.Link)
@@ -289,9 +311,12 @@ namespace API_DACN.Model
                                          where b.MenuId == a.Id
                                          select new Object.Get.FoodOfMenu()
                                          {
+                                             menuId = a.Id,
                                              foodId = b.Id,
                                              name = b.Name,
                                              price = b.Price,
+                                             unit = b.Unit,
+                                             categoryName = b.Category.Name,
                                              pic = (List<string>)(from c in db.Images
                                                                   where c.FoodId == b.Id
                                                                   select c.Link)
@@ -320,9 +345,12 @@ namespace API_DACN.Model
                                          where b.MenuId == a.Id
                                          select new Object.Get.FoodOfMenu()
                                          {
+                                             menuId = a.Id,
                                              foodId = b.Id,
                                              name = b.Name,
                                              price = b.Price,
+                                             unit = b.Unit,
+                                             categoryName = b.Category.Name,
                                              pic = (List<string>)(from c in db.Images
                                                                   where c.FoodId == b.Id
                                                                   select c.Link)
@@ -346,6 +374,7 @@ namespace API_DACN.Model
                 Category c = new Category();
                 c.Id = categoryId;
                 c.Name = category.name;
+                c.status = true;
                 db.Categories.Add(c);
                 db.SaveChanges();
             }
@@ -354,6 +383,24 @@ namespace API_DACN.Model
                 return "null";
             }
             return categoryId;
+        }
+
+        public IEnumerable<Object.Get.GetCategory> getAllCatelogy(string restaurantId)
+        {
+            try
+            {
+                return from a in db.Categories
+                       select new Object.Get.GetCategory()
+                       {
+                           id = a.Id,
+                           name = a.Name,
+                           status = a.status
+                       };
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         //----------------------------categoryRES----------------------------------
@@ -378,7 +425,7 @@ namespace API_DACN.Model
         }
 
         //------------------------------food-----------------------------------
-        public bool AddFood(Object.Input.InputFood updateMenu)
+        public bool AddFoods(Object.Input.InputFood updateMenu)
         {
             try
             {
@@ -402,6 +449,32 @@ namespace API_DACN.Model
                 return false;
             }
             return true;
+        }
+
+        public string AddFood(Object.Input.InsertFood f)
+        {
+            try
+            {
+                string id = setId.GetFoodId();
+
+                Food food = new Food
+                {
+                    Id = id,
+                    Name = f.name,
+                    Price = f.price,
+                    Unit = f.unit,
+                    MenuId = f.menuId,
+                    CategoryId = f.categoryId,
+                };
+                db.Foods.Add(food);
+                db.SaveChanges();
+
+                return id;
+            }
+            catch
+            {
+                return "null";
+            }
         }
 
         public bool updateFood(Object.Update.UpdateFood food)

@@ -35,11 +35,11 @@ namespace API_DACN.Controllers
 
             var result = userModel.SignUp(user);
 
-            if (result == false)
+            if (result == null)
             {
                 return Ok(new Message(0, "Đăng ký thất bại", null));
             }
-            return Ok(new Message(1, "Đăng ký thành công", null));
+            return Ok(new Message(1, token.GetToken(result), result));
         }
 
         [Route("signin")]

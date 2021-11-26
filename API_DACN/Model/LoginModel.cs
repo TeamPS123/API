@@ -18,12 +18,13 @@ namespace API_DACN.Model
             setId = new NextId(db);
         }
 
-        public bool SignUp(Object.UserSignUp user)
+        public string SignUp(Object.UserSignUp user)
         {
             try
             {
+                String id = setId.GetUserId();
                 User u = new User();
-                u.Id = setId.GetUserId();
+                u.Id = id;
                 u.FullName = user.fullName;
                 u.PhoneNumber = user.phone;
                 u.PassswordHash = MD5.CreateMD5(user.pass);
@@ -31,12 +32,13 @@ namespace API_DACN.Model
                 u.Gender = user.gender;
                 db.Users.Add(u);
                 db.SaveChanges();
+
+                return id;
             }
             catch
             {
-                return false;
+                return null;
             }
-            return true;
         }
 
         public bool CheckPhone(string phone)

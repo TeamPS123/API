@@ -67,7 +67,7 @@ namespace API_DACN.Model
                    };
         }
 
-        //status => chờ xác nhận || 1: xác nhận || 2: hủy || 3: quá hạn
+        //status =>0: chờ xác nhận || 1: xác nhận || 2: hủy || 3: quá hạn || 4: từ chối
         public string ReserveTable(Object.Input.InputReserveTable input)
         {
             try

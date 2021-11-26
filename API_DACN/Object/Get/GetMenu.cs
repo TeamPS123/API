@@ -14,9 +14,12 @@ namespace API_DACN.Object.Get
 
     public class FoodOfMenu
     {
+        public string menuId { get; set; }
         public string foodId { get; set; }
         public string name { get; set; }
         public double price { get; set; }
+        public string unit { get; set; }
+        public string categoryName { get; set; }
         public List<string> pic {get; set;}
     }
 

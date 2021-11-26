@@ -74,10 +74,10 @@ namespace API_DACN.Controllers
         }
 
         [HttpPost]
-        [Route("getResWithSearch1")]
-        public IActionResult resListSearch1(Object.Input.InputRes_Search input)
+        [Route("getResWithSupperSearch")]
+        public IActionResult resListSupperSearch(Object.Input.InputRes_Search input)
         {
-            var result = model.resListSearch1(input.catelogyList, input.districtList,input.name, new Other.LngLat(input.lon, input.lat));
+            var result = model.resListSupperSearch(input.catelogyList, input.districtList,input.name, new Other.LngLat(input.lon, input.lat));
 
             if (result == null)
             {

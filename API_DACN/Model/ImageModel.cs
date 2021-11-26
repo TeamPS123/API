@@ -76,13 +76,14 @@ namespace API_DACN.Model
             return true;
         }
 
-        public bool AddImageOfFood(string filename, string userId, string restaurantId, string foodId)
+        public string AddImageOfFood(string filename, string userId, string restaurantId, string foodId)
         {
             try
             {
+                string link = "https://ps.covid21tsp.space/Picture/" + filename;
                 Image image = new Image()
                 {
-                    Link = "https://ps.covid21tsp.space/Picture/" + filename,
+                    Link = link,
                     FoodId = foodId,
                     RestaurantId = restaurantId,
                     UserId = userId,
@@ -90,12 +91,13 @@ namespace API_DACN.Model
                 };
                 db.Images.Add(image);
                 db.SaveChanges();
+
+                return link;
             }
             catch
             {
-                return false;
+                return "null";
             }
-            return true;
         }
     }
 }

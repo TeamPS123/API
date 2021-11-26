@@ -149,6 +149,7 @@ namespace API_DACN.Controllers
             }
 
             string contentRootPath = _HostEnvironment.ContentRootPath;
+            string link = "";
 
             try
             {
@@ -159,8 +160,8 @@ namespace API_DACN.Controllers
                     var imaageSavePath = Path.Combine(contentRootPath, "Picture", name[0] + "_" + foodId + "." + name[1]);
                     if (!System.IO.File.Exists(imaageSavePath))
                     {
-                        var result = imageModel.AddImageOfFood(name[0] + "_" + foodId + "." + name[1], userId, restaurantId, foodId);
-                        if (!result)
+                        link = imageModel.AddImageOfFood(name[0] + "_" + foodId + "." + name[1], userId, restaurantId, foodId);
+                        if (link == "null")
                         {
                             return Ok(new Object.Message(0, "Thêm ảnh thất bại", null));
                         }
@@ -173,7 +174,7 @@ namespace API_DACN.Controllers
             {
                 return Ok(new Object.Message(0, "Thêm ảnh thất bại", null));
             }
-            return Ok(new Object.Message(1, "Thêm ảnh thành công", null));
+            return Ok(new Object.Message(1, "Thêm ảnh thành công", link));
         }
     }
 }
