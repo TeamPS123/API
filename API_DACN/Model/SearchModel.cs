@@ -52,6 +52,7 @@ namespace API_DACN.Model
                            where a.District == district && a.Status == true
                            select new Object.Get.GetRestaurant()
                            {
+                               userId = a.UserId,
                                restaurantId = a.Id,
                                name = a.Name,
                                line = a.Line,
@@ -149,6 +150,7 @@ namespace API_DACN.Model
                     return from a in data
                            select new Object.Get.GetRestaurant()
                            {
+                               userId = a.UserId,
                                restaurantId = a.Id,
                                name = a.Name,
                                line = a.Line,
@@ -281,6 +283,7 @@ namespace API_DACN.Model
                     return from a in data
                            select new Object.Get.GetRestaurant()
                            {
+                               userId = a.UserId,
                                restaurantId = a.Id,
                                name = a.Name,
                                line = a.Line,
@@ -505,6 +508,7 @@ namespace API_DACN.Model
         {
             return new Object.Get.GetRestaurant()
             {
+                userId = item.UserId,
                 restaurantId = item.Id,
                 name = item.Name,
                 line = item.Line,

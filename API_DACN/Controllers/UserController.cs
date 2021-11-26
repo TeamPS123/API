@@ -17,11 +17,13 @@ namespace API_DACN.Controllers
     public class UserController : ControllerBase
     {
         private UserModel userModel;
+        private RestaurantModel resModel;
         private Other.Token token;
 
         public UserController(IConfiguration config, food_location_dbContext db)
         {
             userModel = new UserModel(db);
+            resModel = new RestaurantModel(db);
             token = new Other.Token(config, db);
         }
 
@@ -40,6 +42,24 @@ namespace API_DACN.Controllers
                 return Ok(new Object.Get.Message_ReserveTable(0, "Lấy dữ liệu thất bại", null));
             }
             return Ok(new Object.Get.Message_ReserveTable(1, "Lấy dữ liệu thành công", result));
+        }
+
+        [Route("getAllFoodByReserveTableId")]
+        [HttpGet]
+        public IActionResult getAllFoodByReserveTableId(string userId, string reserveTableId)
+        {
+            if (token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+            var result = resModel.foodListByReserveTableId(reserveTableId);
+
+            if (result == null)
+            {
+                return Ok(new Object.Get.Message_FoodList(0, "Lấy dữ liệu thất bại", null, null));
+            }
+            var reserveTable = userModel.getReserveTable(reserveTableId);
+            return Ok(new Object.Get.Message_FoodList(1, "Lấy dữ liệu thành công", reserveTable, result));
         }
 
         [Route("reserveTable")]

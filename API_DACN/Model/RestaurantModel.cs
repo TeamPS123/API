@@ -18,7 +18,58 @@ namespace API_DACN.Model
             setId = new NextId(db);
         }
 
+        public IEnumerable<Object.Get.GetCategoryRes> getCategoryRes()
+        {
+            try
+            {
+                return from a in db.CategoryRestaurants
+                       select new Object.Get.GetCategoryRes()
+                       {
+                           id = a.Id,
+                           name = a.Name,
+                           icon = a.icon,
+                       };
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+
         //------------------------------restaurant-----------------------------------
+        public Object.Get.getInfoRes getInfoRes(string restaurantId)
+        {
+            try
+            {
+                return (from a in db.Restaurants
+                       where a.Id == restaurantId
+                       select new Object.Get.getInfoRes()
+                       {
+                           name = a.Name,
+                           pic = db.Images.Where(t => t.RestaurantId == restaurantId && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
+                       }).FirstOrDefault();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public string retaurantId(string userId)
+        {
+            try
+            {
+                return (from a in db.Restaurants
+                        where a.User.Id == userId
+                        select a.Id).FirstOrDefault();
+            }
+            catch
+            {
+                return "null";
+            }
+        }
+
         public string AddRestaurant(Object.Input.InputRestaurant restaurant)
         {
             string restaurantId = setId.GetRestaurantId();
@@ -37,6 +88,12 @@ namespace API_DACN.Model
                 r.CloseTime = restaurant.closeTime;
                 r.PhoneRestaurant = restaurant.phone;
                 db.Restaurants.Add(r);
+                db.SaveChanges();
+
+                RestaurantDetail restaurantDetail = new RestaurantDetail();
+                restaurantDetail.CategoryId = restaurant.categoryResId;
+                restaurantDetail.RestaurantId = restaurantId;
+                db.RestaurantDetails.Add(restaurantDetail);
                 db.SaveChanges();
             }
             catch
@@ -76,6 +133,7 @@ namespace API_DACN.Model
                              where a.Id == restaurantId && a.Status == true
                              select new Object.Get.GetRestaurant()
                              {
+                                 userId = a.UserId,
                                  restaurantId = restaurantId,
                                  name = a.Name,
                                  line = a.Line,
@@ -123,6 +181,7 @@ namespace API_DACN.Model
                              where a.Id == promotionId && a.Restaurant.Status == true
                              select new Object.Get.GetRestaurant()
                              {
+                                 userId = a.Restaurant.UserId,
                                  restaurantId = a.RestaurantId,
                                  name = a.Restaurant.Name,
                                  line = a.Restaurant.Line,
@@ -170,6 +229,7 @@ namespace API_DACN.Model
                              where a.Status == true
                              select new Object.Get.GetRestaurant()
                              {
+                                 userId = a.UserId,
                                  restaurantId = a.Id,
                                  name = a.Name,
                                  line = a.Line,
@@ -209,22 +269,52 @@ namespace API_DACN.Model
             }
         }
 
-        public IEnumerable<Object.Get.GetReserveTable1> getAllReserverTableByRestaurantId(string restaurantId)
+        public IEnumerable<Object.Get.GetReserveTable1> getAllReserverTableByRestaurantId(string restaurantId, int code)
         {
             return from reserveTable in db.ReserveTables
-                   where reserveTable.RestaurantId == restaurantId
+                   where reserveTable.RestaurantId == restaurantId && reserveTable.Status == code
                    select new Object.Get.GetReserveTable1()
                    {
-                       restaurantId = reserveTable.Id,
+                       restaurantId = reserveTable.RestaurantId,
                        quantity = reserveTable.QuantityPeople,
                        time = reserveTable.Time,
-                       reserveTableId = reserveTable.RestaurantId,
+                       reserveTableId = reserveTable.Id,
                        promotionId = reserveTable.PromotionId,
                        name = reserveTable.Name,
                        phone = reserveTable.PhoneNumber,
                        note = reserveTable.note,
                        userId = reserveTable.UserId
                    };
+        }
+
+        public string getQuantityReserveTable(string restaurantId, int code)
+        {
+            try { 
+                return (from reserveTable in db.ReserveTables
+                        where reserveTable.RestaurantId == restaurantId && reserveTable.Status == code
+                        select reserveTable).Count().ToString();
+            }
+            catch
+            {
+                return "null";
+            }     
+        }
+
+        public bool updateReserveTable(string reserveTableId, int code)
+        {
+            try
+            {
+                var reserveTable = db.ReserveTables.Find(reserveTableId);
+
+                reserveTable.Status = code;
+                db.SaveChanges();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         //------------------------------menu-----------------------------------
@@ -538,6 +628,33 @@ namespace API_DACN.Model
                                  categoryName = a.Category.Name,
                                  pic = (List<string>)(from c in db.Images
                                                       where c.FoodId == a.Id
+                                                      select c.Link)
+                             };
+
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public IEnumerable<Object.Get.GetFood> foodListByReserveTableId(string reserveTableId)
+        {
+            try
+            {
+                var result = from a in db.ReserveFoods
+                             where a.ReserveTable == reserveTableId
+                             select new Object.Get.GetFood()
+                             {
+                                 foodId = a.Food.Id,
+                                 name = a.Food.Name,
+                                 price = a.Food.Price,
+                                 unit = a.Food.Unit,
+                                 menuName = a.Food.Menu.Name,
+                                 categoryName = a.Food.Category.Name,
+                                 pic = (List<string>)(from c in db.Images
+                                                      where c.FoodId == a.Food.Id
                                                       select c.Link)
                              };
 

@@ -34,21 +34,25 @@ namespace API_DACN.Object.Get
         public GetFood Food { get => food; set => food = value; }
     }
 
+
     public class Message_FoodList
     {
         private int status;
         private string notification;
+        private GetReserveTable reserveTable;
         private IEnumerable<GetFood> foodList;
 
-        public Message_FoodList(int status, string notification, IEnumerable<GetFood> foodList)
+        public Message_FoodList(int status, string notification, GetReserveTable reserveTable, IEnumerable<GetFood> foodList)
         {
             this.status = status;
             this.notification = notification;
+            this.reserveTable = reserveTable;
             this.foodList = foodList;
         }
 
         public int Status { get => status; set => status = value; }
         public string Notification { get => notification; set => notification = value; }
+        public GetReserveTable ReserveTable { get => reserveTable; set => reserveTable = value; }
         public IEnumerable<GetFood> FoodList { get => foodList; set => foodList = value; }
     }
 }

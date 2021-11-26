@@ -14,6 +14,7 @@ namespace API_DACN.Object.Get
         public string name { get; set; }
         public string phone { get; set; }
         public string note { get; set; }
+        public int ? status { get; set; }
         public Get.GetRestaurant restaurant { get; set; }
     }
 

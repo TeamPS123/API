@@ -27,21 +27,70 @@ namespace API_DACN.Controllers
             res_model = new RestaurantModel(db);
         }
 
-        [Route("getAllReserveTableByRestaurantId")]
+        [Route("getInfoRestaurant")]
         [HttpGet]
-        public IActionResult getAllReserverTableByRestaurantId(string userId, string restaurantId)
+        public IActionResult getInfoRestaurant(string userId, string restaurantId)
+        {
+            if (Token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Get.MessageInfoRes(2, "Kiểm tra lại token tý nào", null));
+            }
+            var result = res_model.getInfoRes(restaurantId);
+            if (result == null)
+            {
+                return Ok(new Object.Get.MessageInfoRes(0, "Lấy dữ liệu thất bại", null));
+            }
+            return Ok(new Object.Get.MessageInfoRes(1, "Lấy dữ liệu thành công", result));
+        }
+
+        [Route("getRestaurantId")]
+        [HttpGet]
+        public IActionResult getRestaurantId(string userId)
         {
             if (Token.GetPhoneWithToken(Request.Headers) != userId)
             {
                 return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
             }
-            var result = res_model.getAllReserverTableByRestaurantId(restaurantId);
+            var result = res_model.retaurantId(userId);
+            if (result == "null")
+            {
+                return Ok(new Object.Message(0, "Lấy dữ liệu thất bại", null));
+            }
+            return Ok(new Object.Message(1, "Lấy dữ liệu thành công", result));
+        }
+
+        [Route("getAllReserveTableByRestaurantId")]
+        [HttpGet]
+        public IActionResult getAllReserverTableByRestaurantId(string userId, string restaurantId, int code)
+        {
+            if (Token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+            var result = res_model.getAllReserverTableByRestaurantId(restaurantId, code);
 
             if (result == null)
             {
                 return Ok(new Object.Get.Message_ReserveTable1(0, "Lấy dữ liệu thất bại", null));
             }
             return Ok(new Object.Get.Message_ReserveTable1(1, "Lấy dữ liệu thành công", result));
+        }
+
+        [HttpGet]
+        [Route("getQuantityReserveTable")]
+        public IActionResult getQuantityReserveTable(string userId, string restaurantId, int code)
+        {
+            if (Token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+            var result = res_model.getQuantityReserveTable(restaurantId, code);
+
+            if (result == "null")
+            {
+                return Ok(new Object.Message(0, "Lấy dữ liệu thất bại", null));
+            }
+            return Ok(new Object.Message(1, "Lấy dữ liệu thành công", result));
         }
 
         [HttpGet]
@@ -60,6 +109,24 @@ namespace API_DACN.Controllers
                 return Ok(new Object.Get.Message_MenuList(0, "Lấy dữ liệu thất bại", null));
             }
             return Ok(new Object.Get.Message_MenuList(1, "Lấy dữ liệu thành công", result));
+        }
+
+        [HttpGet]
+        [Route("updateReserveTable")]
+        public IActionResult updateReserveTable(string userId, string reserveTableId, int code)
+        {
+            if (Token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+
+            var result = res_model.updateReserveTable(reserveTableId, code);
+
+            if (!result)
+            {
+                return Ok(new Object.Get.Message_MenuList(0, "Cập nhật phiếu đặt bàn thất bại", null));
+            }
+            return Ok(new Object.Get.Message_MenuList(1, "Cập nhật phiếu đặt bàn thành công", null));
         }
 
         [HttpGet]

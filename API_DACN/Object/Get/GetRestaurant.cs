@@ -7,6 +7,7 @@ namespace API_DACN.Object.Get
 {
     public class GetRestaurant
     {
+        public string userId { get; set; }
         public string restaurantId { get; set; }
         public string name { get; set; }
         public string line { get; set; }
@@ -79,5 +80,29 @@ namespace API_DACN.Object.Get
         public string name { get; set; }
         public string info { get; set; }
         public string value { get; set; }
+    }
+
+    public class getInfoRes
+    {
+        public string name { get; set; }
+        public string pic { get; set; }
+    }
+
+    public class MessageInfoRes
+    {
+        private int status;
+        private string notification;
+        private getInfoRes res;
+
+        public MessageInfoRes(int status, string notification, getInfoRes res)
+        {
+            this.status = status;
+            this.notification = notification;
+            this.res = res;
+        }
+
+        public int Status { get => status; set => status = value; }
+        public string Notification { get => notification; set => notification = value; }
+        public getInfoRes Res { get => res; set => res = value; }
     }
 }

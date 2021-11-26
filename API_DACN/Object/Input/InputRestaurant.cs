@@ -16,6 +16,7 @@ namespace API_DACN.Object.Input
         public string openTime { get; set; }
         public string closeTime { get; set; }
         public string phone { get; set; }
+        public int categoryResId { get; set; }
     }
 
     public class InputRes_distance

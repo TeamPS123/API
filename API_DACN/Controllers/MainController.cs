@@ -22,6 +22,19 @@ namespace API_DACN.Controllers
         }
 
         [HttpGet]
+        [Route("getCategoryRes")]
+        public IActionResult getCategoryRes()
+        {
+            var result = model.getCategoryRes();
+
+            if (result == null)
+            {
+                return Ok(new Object.Get.Message_CategoryResList(0, "Lấy dữ liệu thất bại", null));
+            }
+            return Ok(new Object.Get.Message_CategoryResList(1, "Lấy dữ liệu thành công", result));
+        }
+
+        [HttpGet]
         [Route("getRestaurant")]
         public IActionResult getRestaurant(string restaurantId)
         {
@@ -135,9 +148,9 @@ namespace API_DACN.Controllers
 
             if (result == null)
             {
-                return Ok(new Object.Get.Message_FoodList(0, "Lấy dữ liệu thất bại", null));
+                return Ok(new Object.Get.Message_FoodList(0, "Lấy dữ liệu thất bại", null, null));
             }
-            return Ok(new Object.Get.Message_FoodList(1, "Lấy dữ liệu thành công", result));
+            return Ok(new Object.Get.Message_FoodList(1, "Lấy dữ liệu thành công", null, result));
         }
 
         [HttpGet]

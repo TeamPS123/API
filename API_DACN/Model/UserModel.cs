@@ -31,10 +31,12 @@ namespace API_DACN.Model
                        name = reserveTable.Name,
                        phone = reserveTable.PhoneNumber,
                        note = reserveTable.note,
+                       status = reserveTable.Status,
                        restaurant = (from b in db.Restaurants
                                      where b.Id == reserveTable.RestaurantId
                                      select new Object.Get.GetRestaurant()
                                      {
+                                         userId = b.UserId,
                                          restaurantId = b.Id,
                                          name = b.Name,
                                          line = b.Line,
@@ -65,6 +67,57 @@ namespace API_DACN.Model
                                                        }
                                      }).FirstOrDefault()
                    };
+        }
+
+        public Object.Get.GetReserveTable getReserveTable(string reserveTableId)
+        {
+            return (from reserveTable in db.ReserveTables
+                   where reserveTable.Id == reserveTableId
+                   select new Object.Get.GetReserveTable()
+                   {
+                       Id = reserveTable.Id,
+                       quantity = reserveTable.QuantityPeople,
+                       time = reserveTable.Time,
+                       promotionId = reserveTable.PromotionId,
+                       name = reserveTable.Name,
+                       phone = reserveTable.PhoneNumber,
+                       note = reserveTable.note,
+                       status = reserveTable.Status,
+                       restaurant = (from b in db.Restaurants
+                                     where b.Id == reserveTable.RestaurantId
+                                     select new Object.Get.GetRestaurant()
+                                     {
+                                         userId = b.UserId,
+                                         restaurantId = b.Id,
+                                         name = b.Name,
+                                         line = b.Line,
+                                         city = b.City,
+                                         district = b.District,
+                                         longLat = b.LongLat,
+                                         openTime = b.OpenTime,
+                                         closeTime = b.CloseTime,
+                                         distance = "Không xác đinh",
+                                         phoneRes = b.PhoneRestaurant,
+                                         mainPic = db.Images.Where(t => t.RestaurantId == b.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
+                                         pic = GetImage.getImageWithRes(b.Id, db),
+                                         categoryResStr = Other.Convert.ConvertListToString(b.RestaurantDetails.Select(c => c.Category.Name).ToList()),
+                                         promotionRes = from c in b.Promotions
+                                                        select new Object.Get.GetPromotion_Res()
+                                                        {
+                                                            id = c.Id,
+                                                            name = c.Name,
+                                                            info = c.Info,
+                                                            value = c.Value
+                                                        },
+                                         categoryRes = from d in b.RestaurantDetails
+                                                       select new Object.Get.GetCategoryRes()
+                                                       {
+                                                           id = d.CategoryId,
+                                                           name = d.Category.Name,
+                                                           icon = d.Category.icon
+                                                       }
+                                     }).FirstOrDefault()
+                   }).FirstOrDefault();
         }
 
         //status =>0: chờ xác nhận || 1: xác nhận || 2: hủy || 3: quá hạn || 4: từ chối
