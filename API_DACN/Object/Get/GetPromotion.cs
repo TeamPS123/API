@@ -36,4 +36,30 @@ namespace API_DACN.Object.Get
         public string Notification { get => notification; set => notification = value; }
         public IEnumerable<GetPromotion> ProList { get => proList; set => proList = value; }
     }
+
+    public class GetPromotion1
+    {
+        public string promotionId { get; set; }
+        public string name { get; set; }
+        public string info { get; set; }
+        public string value { get; set; }
+    }
+
+    public class Message_Promotion
+    {
+        private int status;
+        private string notification;
+        private IEnumerable<GetPromotion1> proList;
+
+        public Message_Promotion(int status, string notification, IEnumerable<GetPromotion1> proList)
+        {
+            this.status = status;
+            this.notification = notification;
+            this.proList = proList;
+        }
+
+        public int Status { get => status; set => status = value; }
+        public string Notification { get => notification; set => notification = value; }
+        public IEnumerable<GetPromotion1> ProList { get => proList; set => proList = value; }
+    }
 }

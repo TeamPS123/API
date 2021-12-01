@@ -232,6 +232,7 @@ namespace API_DACN.Controllers
             return Ok(new Object.Message(1, "Thêm loại thức ăn thành công", add));
         }
 
+        //------------------------------food-----------------------------------
         [Route("addFoods")]
         [HttpPost]
         public IActionResult AddFoods(Object.Input.InputFood menu)
@@ -283,6 +284,24 @@ namespace API_DACN.Controllers
             return Ok(new Object.Message(1, "Cập nhật thức ăn thành công", null));
         }
 
+        [HttpGet]
+        [Route("delFood")]
+        public IActionResult delFood(string userId, string foodId)
+        {
+            if (Token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+
+            var result = res_model.delFood(foodId);
+            if (result == false)
+            {
+                return Ok(new Object.Message(0, "Xóa thức ăn thất bại", null));
+            }
+            return Ok(new Object.Message(1, "Xóa thức ăn thành công", null));
+        }
+
+        //------------------------------promotion-----------------------------------
         [Route("addPromotion")]
         [HttpPost]
         public IActionResult AddPromotion(Object.Input.InputPromotion promotion)
@@ -315,6 +334,40 @@ namespace API_DACN.Controllers
                 return Ok(new Object.Message(0, "Cập nhật khuyến mãi thất bại", null));
             }
             return Ok(new Object.Message(1, "Cập nhật khuyến mãi thành công", null));
+        }
+
+        [HttpGet]
+        [Route("getPromotionList")]
+        public IActionResult getPromotionList(string userId, string restaurantId)
+        {
+            if (Token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Get.Message_Promotion(2, "Kiểm tra lại token tý nào", null));
+            }
+
+            var result = res_model.getPromotions(restaurantId);
+            if (result != null)
+            {
+                return Ok(new Object.Get.Message_Promotion(0, "Lấy dữ liệu thành công", null));
+            }
+            return Ok(new Object.Get.Message_Promotion(1, "Lấy dữ liệu thất bại", result));
+        }
+
+        [HttpGet]
+        [Route("delPromotion")]
+        public IActionResult delPromotion(string userId, string promotionId)
+        {
+            if (Token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+
+            var result = res_model.delPromotion(promotionId);
+            if (result.Equals("null"))
+            {
+                return Ok(new Object.Message(0, "Thêm khuyến mãi thất bại", null));
+            }
+            return Ok(new Object.Message(1, "Thêm khuyến mãi thành công", null));
         }
     }
 }

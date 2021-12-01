@@ -38,6 +38,25 @@ namespace API_DACN.Model
 
 
         //------------------------------restaurant-----------------------------------
+        public Object.Get.GetStaticRes getStaticRes(string restaurantId)
+        {
+            try
+            {
+                return (from a in db.Restaurants
+                       where a.Id == restaurantId
+                       select new Object.Get.GetStaticRes()
+                       {
+                           amount_today = "5",
+                           amount_toweek = "20",
+                           statusRes = a.Status
+                       }).FirstOrDefault();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public Object.Get.getInfoRes getInfoRes(string restaurantId)
         {
             try
@@ -639,6 +658,22 @@ namespace API_DACN.Model
             }
         }
 
+        public bool delFood(string foodId)
+        {
+            try
+            {
+                Food food = db.Foods.Find(foodId);
+                db.Remove(food);
+                db.SaveChanges();
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public IEnumerable<Object.Get.GetFood> foodListByReserveTableId(string reserveTableId)
         {
             try
@@ -730,6 +765,42 @@ namespace API_DACN.Model
             {
                 return null;
             }
+        }
+
+        public IEnumerable<Object.Get.GetPromotion1> getPromotions(string restaurantId)
+        {
+            try
+            {
+                return from a in db.Promotions
+                       where a.RestaurantId == restaurantId
+                       select new Object.Get.GetPromotion1()
+                       {
+                           promotionId = a.Id,
+                           name = a.Name,
+                           value = a.Value,
+                           info = a.Info,
+                       };
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public bool delPromotion(string promotionId) 
+        {
+            try
+            {
+                var promotion = db.Promotions.Find(promotionId);
+                db.Remove(promotion);
+
+                db.SaveChanges();
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
         }
     }
 }
