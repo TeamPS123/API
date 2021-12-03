@@ -7730,17 +7730,21 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\xyzsy\\.nuget\\packages\\": {}
+    "C:\\Users\\xyzsy\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\xyzsy\\Desktop\\API\\API_DACN\\API_DACN.csproj",
+      "projectUniqueName": "C:\\Users\\xyzsy\\OneDrive\\Desktop\\API\\API_DACN\\API_DACN.csproj",
       "projectName": "API_DACN",
-      "projectPath": "C:\\Users\\xyzsy\\Desktop\\API\\API_DACN\\API_DACN.csproj",
+      "projectPath": "C:\\Users\\xyzsy\\OneDrive\\Desktop\\API\\API_DACN\\API_DACN.csproj",
       "packagesPath": "C:\\Users\\xyzsy\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\xyzsy\\Desktop\\API\\API_DACN\\obj\\",
+      "outputPath": "C:\\Users\\xyzsy\\OneDrive\\Desktop\\API\\API_DACN\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+      ],
       "configFilePaths": [
         "C:\\Users\\xyzsy\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
@@ -7821,7 +7825,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.402\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.403\\RuntimeIdentifierGraph.json"
       }
     }
   }
