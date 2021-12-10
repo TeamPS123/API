@@ -32,7 +32,7 @@ namespace API_DACN.Model
         //    db.SaveChanges();
         //}
 
-        public bool AddImageOfUser(string filename, string userId)
+        public bool AddImageOfUser(string filename, string userId, string path)
         {
             try
             {
@@ -43,6 +43,7 @@ namespace API_DACN.Model
                     RestaurantId = "0",
                     UserId = userId,
                     CategoryId = "0",
+                    Path = path,
                 };
                 db.Images.Add(image);
                 db.SaveChanges();
@@ -54,7 +55,7 @@ namespace API_DACN.Model
             return true;
         }
 
-        public bool AddImageOfRes(string filename, string userId, string restaurantId)
+        public bool AddImageOfRes(string filename, string userId, string restaurantId, string path)
         {
             try
             {
@@ -65,6 +66,7 @@ namespace API_DACN.Model
                     RestaurantId = restaurantId,
                     UserId = userId,
                     CategoryId = "0",
+                    Path = path,
                 };
                 db.Images.Add(image);
                 db.SaveChanges();
@@ -76,7 +78,7 @@ namespace API_DACN.Model
             return true;
         }
 
-        public string AddImageOfFood(string filename, string userId, string restaurantId, string foodId)
+        public string AddImageOfFood(string filename, string userId, string restaurantId, string foodId, string path)
         {
             try
             {
@@ -88,6 +90,7 @@ namespace API_DACN.Model
                     RestaurantId = restaurantId,
                     UserId = userId,
                     CategoryId = "0",
+                    Path = path,
                 };
                 db.Images.Add(image);
                 db.SaveChanges();
@@ -98,6 +101,28 @@ namespace API_DACN.Model
             {
                 return "null";
             }
+        }
+
+        public List<string> DelImageOfFood(string foodId)
+        {
+            List<string> ImgList = null;
+
+            try
+            {
+                IEnumerable<Image> images = db.Images.Where(t => t.FoodId == foodId);
+                foreach(var item in images)
+                {
+                    db.Images.Remove(item);
+                    db.SaveChanges();
+                    ImgList.Add(item.Link);
+                }
+            }
+            catch
+            {
+
+            }
+
+            return ImgList;
         }
     }
 }

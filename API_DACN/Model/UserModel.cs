@@ -47,6 +47,8 @@ namespace API_DACN.Model
                                          closeTime = b.CloseTime,
                                          distance = Distance.distance(b.LongLat, lngLat).ToString(),
                                          phoneRes = b.PhoneRestaurant,
+                                         status = b.Status,
+                                         statusCO = b.statusCO,
                                          mainPic = db.Images.Where(t => t.RestaurantId == b.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                                          pic = GetImage.getImageWithRes(b.Id, db),
                                          categoryResStr = Other.Convert.ConvertListToString(b.RestaurantDetails.Select(c => c.Category.Name).ToList()),
@@ -98,6 +100,8 @@ namespace API_DACN.Model
                                          closeTime = b.CloseTime,
                                          distance = "Không xác đinh",
                                          phoneRes = b.PhoneRestaurant,
+                                         status = b.Status,
+                                         statusCO = b.statusCO,
                                          mainPic = db.Images.Where(t => t.RestaurantId == b.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                                          pic = GetImage.getImageWithRes(b.Id, db),
                                          categoryResStr = Other.Convert.ConvertListToString(b.RestaurantDetails.Select(c => c.Category.Name).ToList()),
@@ -137,13 +141,14 @@ namespace API_DACN.Model
                     UserId = input.userId,
                     Name = input.name,
                     PhoneNumber = input.phone,
-                    note = input.note
+                    note = input.note,
+                    Day = Other.Convert.ConvertDateTimeToString_FromClient(input.time)
                 };
                 db.ReserveTables.Add(reserve);
                 db.SaveChanges();
                 return id;
             }
-            catch
+            catch(Exception e)
             {
                 return null;
             }

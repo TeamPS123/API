@@ -19,6 +19,8 @@ namespace API_DACN.Object.Get
         public string distance { get; set; }
         public string phoneRes { get; set; }
         public string mainPic { get; set; }
+        public bool status { get; set; }
+        public string statusCO { get; set; }
         public List<string> pic { get; set; }
         public string categoryResStr { get; set; }
         public IEnumerable<GetPromotion_Res> promotionRes { get; set; }
@@ -104,5 +106,36 @@ namespace API_DACN.Object.Get
         public int Status { get => status; set => status = value; }
         public string Notification { get => notification; set => notification = value; }
         public getInfoRes Res { get => res; set => res = value; }
+    }
+
+    public class getResDetail
+    {
+        public int amountDay { get; set; }
+        public int amountWeek { get; set; }
+
+        public bool status { get; set; }
+    }
+
+    public class MessageResDetail
+    {
+        private int status;
+        private string notification;
+        private getResDetail resDetail;
+
+        public MessageResDetail()
+        {
+
+        }
+
+        public MessageResDetail(int status, string notification, getResDetail resDetail)
+        {
+            this.Status = status;
+            this.Notification = notification;
+            this.ResDetail = resDetail;
+        }
+
+        public int Status { get => status; set => status = value; }
+        public string Notification { get => notification; set => notification = value; }
+        public getResDetail ResDetail { get => resDetail; set => resDetail = value; }
     }
 }

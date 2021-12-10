@@ -12,6 +12,7 @@ namespace API_DACN.Object.Get
         public string name { get; set; }
         public string info { get; set; }
         public string value { get; set; }
+        public bool ? status { get; set; }
         public string line { get; set; }
         public string district { get; set; }
         public string city { get; set; }
@@ -43,6 +44,7 @@ namespace API_DACN.Object.Get
         public string name { get; set; }
         public string info { get; set; }
         public string value { get; set; }
+        public bool ? status { get; set; }
     }
 
     public class Message_Promotion

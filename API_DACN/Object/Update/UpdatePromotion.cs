@@ -12,5 +12,6 @@ namespace API_DACN.Object.Update
         public string info { get; set; }
         public string value { get; set; }
         public string userId { get; set; }
+        public bool status { get; set; }
     }
 }

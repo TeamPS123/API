@@ -1,5 +1,6 @@
 ﻿using API_DACN.Database;
 using API_DACN.Model;
+using API_DACN.Other;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -20,9 +21,11 @@ namespace API_DACN.Controllers
     {
         private Other.Token Token;
         private RestaurantModel res_model;
+        private food_location_dbContext db;
 
         public RestaurantController(IConfiguration config, food_location_dbContext db)
         {
+            this.db = db;
             Token = new Other.Token(config, db);
             res_model = new RestaurantModel(db);
         }
@@ -57,6 +60,49 @@ namespace API_DACN.Controllers
                 return Ok(new Object.Message(0, "Lấy dữ liệu thất bại", null));
             }
             return Ok(new Object.Message(1, "Lấy dữ liệu thành công", result));
+        }
+
+        [Route("getResDetail")]
+        [HttpGet]
+        public IActionResult getResDetail(string userId, string restaurantId)
+        {
+            if (Token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+
+            List<DateTime> list = DateTime.Now.DaysOfWeek();
+            List<string> dayList = new List<string>();
+            foreach(var item in list)
+            {
+                //đưa vào danh sách cho model
+                dayList.Add(Other.Convert.ConvertDateTimeToString(item));
+            }
+
+            string now = Other.Convert.ConvertDateTimeToString(DateTime.Now);
+            var result = res_model.getResDetail(dayList, now, restaurantId);
+            if(result == null)
+            {
+                return Ok(new Object.Get.MessageResDetail(0, "Lấy dữ liệu thất bại", null));
+            }
+
+            return Ok(new Object.Get.MessageResDetail(1, "Lấy dữ liệu thành công", result));
+        }
+
+        [Route("changeStatus")]
+        [HttpGet]
+        public IActionResult changeStatus(string userId, string restaurantId, bool status)
+        {
+            if (Token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+            var result = res_model.changeStatus(restaurantId, status);
+            if (!result)
+            {
+                return Ok(new Object.Message(0, "Thay đổi trạng thái thất bại", null));
+            }
+            return Ok(new Object.Message(1, "Thay đổi trạng thái thành công", null));
         }
 
         [Route("getAllReserveTableByRestaurantId")]
@@ -232,6 +278,24 @@ namespace API_DACN.Controllers
             return Ok(new Object.Message(1, "Thêm loại thức ăn thành công", add));
         }
 
+        //------------------------------reserveTable-----------------------------------
+        [Route("getFoodsByResId")]
+        [HttpGet]
+        public IActionResult getFoodsByResId(string userId, string reserveTableId)
+        {
+            if (Token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+
+            var add = res_model.getFoodsByResId(reserveTableId);
+            if (add.Equals("null"))
+            {
+                return Ok(new Object.Get.Message_ReserveTableDetail(0, "Thêm loại thức ăn thất bại", null));
+            }
+            return Ok(new Object.Get.Message_ReserveTableDetail(1, "Thêm loại thức ăn thành công", add));
+        }
+
         //------------------------------food-----------------------------------
         [Route("addFoods")]
         [HttpPost]
@@ -298,6 +362,13 @@ namespace API_DACN.Controllers
             {
                 return Ok(new Object.Message(0, "Xóa thức ăn thất bại", null));
             }
+
+            DelImg delImg = new DelImg(db);
+            if (!delImg.OfFood(foodId))
+            {
+                return Ok(new Object.Message(3, "Xóa hình ảnh thức ăn thất bại", null));
+            }
+
             return Ok(new Object.Message(1, "Xóa thức ăn thành công", null));
         }
 
@@ -346,11 +417,11 @@ namespace API_DACN.Controllers
             }
 
             var result = res_model.getPromotions(restaurantId);
-            if (result != null)
+            if (result == null)
             {
-                return Ok(new Object.Get.Message_Promotion(0, "Lấy dữ liệu thành công", null));
+                return Ok(new Object.Get.Message_Promotion(0, "Lấy dữ liệu thất bại", null));
             }
-            return Ok(new Object.Get.Message_Promotion(1, "Lấy dữ liệu thất bại", result));
+            return Ok(new Object.Get.Message_Promotion(1, "Lấy dữ liệu thành công", result));
         }
 
         [HttpGet]

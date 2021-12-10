@@ -13,5 +13,6 @@ namespace API_DACN.Database
         public string UserId { get; set; }
         public string CategoryId { get; set; }
         public int Id { get; set; }
+        public string Path { get; set; }
     }
 }

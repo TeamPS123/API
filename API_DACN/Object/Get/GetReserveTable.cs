@@ -91,4 +91,22 @@ namespace API_DACN.Object.Get
         public string Notification { get => notification; set => notification = value; }
         public GetStaticRes StaticRes { get => staticRes; set => staticRes = value; }
     }
+
+    public class Message_ReserveTableDetail
+    {
+        private int status;
+        private string notification;
+        private IEnumerable<FoodOfMenu> foodList;
+
+        public Message_ReserveTableDetail(int status, string notification, IEnumerable<FoodOfMenu> foodList)
+        {
+            this.status = status;
+            this.notification = notification;
+            this.foodList = foodList;
+        }
+
+        public int Status { get => status; set => status = value; }
+        public string Notification { get => notification; set => notification = value; }
+        public IEnumerable<FoodOfMenu> FoodList { get => foodList; set => foodList = value; }
+    }
 }

@@ -17,6 +17,7 @@ namespace API_DACN.Database
         public string Name { get; set; }
         public string Info { get; set; }
         public string Value { get; set; }
+        public bool ? status { get; set; }
 
         public virtual Restaurant Restaurant { get; set; }
         public virtual ICollection<ReserveTable> ReserveTables { get; set; }

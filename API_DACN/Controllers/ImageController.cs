@@ -83,7 +83,7 @@ namespace API_DACN.Controllers
                     var imaageSavePath = Path.Combine(contentRootPath, "Picture", name[0]+"_"+userId+"."+name[1]);
                     if (!System.IO.File.Exists(imaageSavePath))
                     {
-                        var result = imageModel.AddImageOfUser(name[0] + "_" + userId + "." + name[1], userId);
+                        var result = imageModel.AddImageOfUser(name[0] + "_" + userId + "." + name[1], userId, imaageSavePath);
                         if (!result)
                         {
                             return Ok(new Object.Message(0, "Thêm ảnh thất bại", null));
@@ -121,7 +121,7 @@ namespace API_DACN.Controllers
                     var imaageSavePath = Path.Combine(contentRootPath, "Picture", name[0] + "_" + restaurantId + "." + name[1]);
                     if (!System.IO.File.Exists(imaageSavePath))
                     {
-                        var result = imageModel.AddImageOfRes(name[0] + "_" + restaurantId + "." + name[1], userId, restaurantId);
+                        var result = imageModel.AddImageOfRes(name[0] + "_" + restaurantId + "." + name[1], userId, restaurantId, imaageSavePath);
                         if (!result)
                         {
                             return Ok(new Object.Message(0, "Thêm ảnh thất bại", null));
@@ -160,7 +160,7 @@ namespace API_DACN.Controllers
                     var imaageSavePath = Path.Combine(contentRootPath, "Picture", name[0] + "_" + foodId + "." + name[1]);
                     if (!System.IO.File.Exists(imaageSavePath))
                     {
-                        link = imageModel.AddImageOfFood(name[0] + "_" + foodId + "." + name[1], userId, restaurantId, foodId);
+                        link = imageModel.AddImageOfFood(name[0] + "_" + foodId + "." + name[1], userId, restaurantId, foodId, imaageSavePath);
                         if (link == "null")
                         {
                             return Ok(new Object.Message(0, "Thêm ảnh thất bại", null));

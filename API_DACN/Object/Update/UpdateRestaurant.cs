@@ -17,5 +17,6 @@ namespace API_DACN.Object.Update
         public string openTime { get; set; }
         public string closeTime { get; set; }
         public bool status { get; set; }
+        public string statusCO { get; set; }
     }
 }

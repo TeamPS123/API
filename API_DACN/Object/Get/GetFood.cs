@@ -16,6 +16,19 @@ namespace API_DACN.Object.Get
         public List<string> pic { get; set; }
     }
 
+    public class GetFoodOfReserveTable
+    {
+        public string foodId { get; set; }
+        public string name { get; set; }
+        public double price { get; set; }
+        public string unit { get; set; }
+        public string menuName { get; set; }
+        public string categoryName { get; set; }
+        public int amount { get; set; }
+        public List<string> pic { get; set; }
+
+    }
+
     public class Message_Food
     {
         private int status;
@@ -40,9 +53,9 @@ namespace API_DACN.Object.Get
         private int status;
         private string notification;
         private GetReserveTable reserveTable;
-        private IEnumerable<GetFood> foodList;
+        private IEnumerable<GetFoodOfReserveTable> foodList;
 
-        public Message_FoodList(int status, string notification, GetReserveTable reserveTable, IEnumerable<GetFood> foodList)
+        public Message_FoodList(int status, string notification, GetReserveTable reserveTable, IEnumerable<GetFoodOfReserveTable> foodList)
         {
             this.status = status;
             this.notification = notification;
@@ -53,6 +66,6 @@ namespace API_DACN.Object.Get
         public int Status { get => status; set => status = value; }
         public string Notification { get => notification; set => notification = value; }
         public GetReserveTable ReserveTable { get => reserveTable; set => reserveTable = value; }
-        public IEnumerable<GetFood> FoodList { get => foodList; set => foodList = value; }
+        public IEnumerable<GetFoodOfReserveTable> FoodList { get => foodList; set => foodList = value; }
     }
 }

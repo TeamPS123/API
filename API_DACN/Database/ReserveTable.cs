@@ -22,6 +22,7 @@ namespace API_DACN.Database
         public string Name { get; set; }
         public string PhoneNumber { get; set; }
         public string note { get; set; }
+        public string Day { get; set; }
 
         public virtual Promotion Promotion { get; set; }
         public virtual User User { get; set; }
