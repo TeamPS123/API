@@ -173,11 +173,12 @@ namespace API_DACN.Controllers
 
             if (rates == null)
             {
-                return Ok(new Object.Get.Message_Rate(0, "Lấy dữ liệu thất bại", "0", null));
+                return Ok(new Object.Get.Message_Rate(0, "Lấy dữ liệu thất bại", "0", null, null));
             }
 
             var rateTotal = model.rateTotal(restaurantId);
-            return Ok(new Object.Get.Message_Rate(1, "Lấy dữ liệu thành công", rateTotal, rates));
+            var count = model.getCountRating(restaurantId);
+            return Ok(new Object.Get.Message_Rate(1, "Lấy dữ liệu thành công", rateTotal, count, rates));
         }
     }
 }

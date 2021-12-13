@@ -86,6 +86,28 @@ namespace API_DACN.Model
                 return "0";
             }
         }
+
+        public Object.Get.GetCountRating getCountRating(string restaurantId)
+        {
+            try
+            {
+                var rates = db.Rates.Where(t => t.RestaurantId == restaurantId);
+
+                var result = new Object.Get.GetCountRating();
+                result.count = rates.Count()+"";
+                result.count1 = rates.Where(t => t.Value == 1).Count() + "";
+                result.count2 = rates.Where(t => t.Value == 2).Count() + "";
+                result.count3 = rates.Where(t => t.Value == 3).Count() + "";
+                result.count4 = rates.Where(t => t.Value == 4).Count() + "";
+                result.count5 = rates.Where(t => t.Value == 5).Count() + "";
+
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
+        }
         
         public bool checkRes(string userId)
         {
