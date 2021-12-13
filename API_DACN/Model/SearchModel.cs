@@ -64,7 +64,7 @@ namespace API_DACN.Model
                                distance = "Không xác định",
                                phoneRes = a.PhoneRestaurant,
                                status = a.Status,
-                               statusCO = a.statusCO,
+                               statusCO = a.StatusCo,
                                mainPic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                                pic = GetImage.getImageWithRes(a.Id, db),
                                categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
@@ -83,7 +83,7 @@ namespace API_DACN.Model
                                              {
                                                  id = b.CategoryId,
                                                  name = b.Category.Name,
-                                                 icon = b.Category.icon
+                                                 icon = b.Category.Icon
                                              }
                            }; 
                 }
@@ -164,7 +164,7 @@ namespace API_DACN.Model
                                distance = "Không xác định",
                                phoneRes = a.PhoneRestaurant,
                                status = a.Status,
-                               statusCO = a.statusCO,
+                               statusCO = a.StatusCo,
                                mainPic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                                pic = GetImage.getImageWithRes(a.Id, db),
                                categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
@@ -183,7 +183,7 @@ namespace API_DACN.Model
                                              {
                                                  id = b.CategoryId,
                                                  name = b.Category.Name,
-                                                 icon = b.Category.icon
+                                                 icon = b.Category.Icon
                                              }
                            };
                 }
@@ -220,13 +220,13 @@ namespace API_DACN.Model
                 {
                     // Search category name. if data is null, will search food name
                     data = (from b in db.Foods
-                           where b.Category.key_word.ToUpper().Contains(name.ToUpper()) && b.Menu.Restaurant.Status == true
+                           where b.Category.KeyWord.ToUpper().Contains(name.ToUpper()) && b.Menu.Restaurant.Status == true
                            select b.Menu.Restaurant).ToList();
 
                     if (data.Count() == 0)
                     {
                         data = (from c in db.Foods
-                               where c.key_word.ToUpper().Contains(name.ToUpper()) && c.Menu.Restaurant.Status == true
+                               where c.KeyWord.ToUpper().Contains(name.ToUpper()) && c.Menu.Restaurant.Status == true
                                select c.Menu.Restaurant).ToList();
                     }
 
@@ -308,7 +308,7 @@ namespace API_DACN.Model
                                distance = "Không xác định",
                                phoneRes = a.PhoneRestaurant,
                                status = a.Status,
-                               statusCO = a.statusCO,
+                               statusCO = a.StatusCo,
                                mainPic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                                pic = GetImage.getImageWithRes(a.Id, db),
                                categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
@@ -327,7 +327,7 @@ namespace API_DACN.Model
                                              {
                                                  id = b.CategoryId,
                                                  name = b.Category.Name,
-                                                 icon = b.Category.icon
+                                                 icon = b.Category.Icon
                                              }
                            };
                 }
@@ -535,7 +535,7 @@ namespace API_DACN.Model
                 distance = distance,
                 phoneRes = item.PhoneRestaurant,
                 status = item.Status,
-                statusCO = item.statusCO,
+                statusCO = item.StatusCo,
                 mainPic = db.Images.Where(t => t.RestaurantId == item.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                 pic = GetImage.getImageWithRes(item.Id, db),
                 categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == item.Id).Select(c => c.Category.Name).ToList()),
@@ -554,7 +554,7 @@ namespace API_DACN.Model
                               {
                                   id = b.CategoryId,
                                   name = b.Category.Name,
-                                  icon = b.Category.icon
+                                  icon = b.Category.Icon
                               }
             };
         }

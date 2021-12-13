@@ -9,6 +9,7 @@ namespace API_DACN.Database
 {
     public partial class food_location_dbContext : DbContext
     {
+
         public food_location_dbContext(DbContextOptions<food_location_dbContext> options)
             : base(options)
         {
@@ -20,6 +21,7 @@ namespace API_DACN.Database
         public virtual DbSet<Image> Images { get; set; }
         public virtual DbSet<Menu> Menus { get; set; }
         public virtual DbSet<Promotion> Promotions { get; set; }
+        public virtual DbSet<Rate> Rates { get; set; }
         public virtual DbSet<ReserveFood> ReserveFoods { get; set; }
         public virtual DbSet<ReserveTable> ReserveTables { get; set; }
         public virtual DbSet<Restaurant> Restaurants { get; set; }
@@ -29,7 +31,7 @@ namespace API_DACN.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema("devsy")
+            modelBuilder.HasDefaultSchema("devSy")
                 .HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
             modelBuilder.Entity<Category>(entity =>
@@ -41,14 +43,24 @@ namespace API_DACN.Database
                     .IsUnicode(false)
                     .HasDefaultValueSql("([dbo].[AUTO_CategoryID]())");
 
+                entity.Property(e => e.KeyWord)
+                    .IsUnicode(false)
+                    .HasColumnName("key_word");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(256);
+
+                entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .HasDefaultValueSql("((1))");
             });
 
             modelBuilder.Entity<CategoryRestaurant>(entity =>
             {
                 entity.ToTable("CategoryRestaurant", "dbo");
+
+                entity.Property(e => e.Icon).HasColumnName("icon");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -69,6 +81,10 @@ namespace API_DACN.Database
                     .HasMaxLength(6)
                     .IsUnicode(false);
 
+                entity.Property(e => e.KeyWord)
+                    .IsUnicode(false)
+                    .HasColumnName("key_word");
+
                 entity.Property(e => e.MenuId)
                     .IsRequired()
                     .HasMaxLength(6)
@@ -77,6 +93,10 @@ namespace API_DACN.Database
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(256);
+
+                entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.Unit)
                     .IsRequired()
@@ -109,6 +129,8 @@ namespace API_DACN.Database
 
                 entity.Property(e => e.Link).IsRequired();
 
+                entity.Property(e => e.Path).IsUnicode(false);
+
                 entity.Property(e => e.RestaurantId)
                     .HasMaxLength(10)
                     .IsUnicode(false);
@@ -136,6 +158,10 @@ namespace API_DACN.Database
                     .HasMaxLength(6)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .HasDefaultValueSql("((1))");
+
                 entity.HasOne(d => d.Restaurant)
                     .WithMany(p => p.Menus)
                     .HasForeignKey(d => d.RestaurantId)
@@ -162,6 +188,8 @@ namespace API_DACN.Database
                     .IsUnicode(false)
                     .HasDefaultValueSql("([dbo].[AUTO_PromotionID]())");
 
+                entity.Property(e => e.Status).HasColumnName("status");
+
                 entity.Property(e => e.Value)
                     .HasMaxLength(255)
                     .HasColumnName("value");
@@ -171,6 +199,39 @@ namespace API_DACN.Database
                     .HasForeignKey(d => d.RestaurantId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Promotion_Restaurant");
+            });
+
+            modelBuilder.Entity<Rate>(entity =>
+            {
+                entity.ToTable("Rate", "dbo");
+
+                entity.Property(e => e.Content).IsRequired();
+
+                entity.Property(e => e.Date)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.RestaurantId)
+                    .IsRequired()
+                    .HasMaxLength(6)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasMaxLength(7)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.Restaurant)
+                    .WithMany(p => p.Rates)
+                    .HasForeignKey(d => d.RestaurantId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Rate__Restaurant__6477ECF3");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Rates)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Rate__UserId__656C112C");
             });
 
             modelBuilder.Entity<ReserveFood>(entity =>
@@ -209,6 +270,18 @@ namespace API_DACN.Database
                     .IsUnicode(false)
                     .HasDefaultValueSql("([dbo].[AUTO_ReserveTableID]())");
 
+                entity.Property(e => e.Day)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Name).HasMaxLength(256);
+
+                entity.Property(e => e.Note)
+                    .HasMaxLength(256)
+                    .HasColumnName("note");
+
+                entity.Property(e => e.PhoneNumber).HasMaxLength(15);
+
                 entity.Property(e => e.PromotionId)
                     .HasMaxLength(6)
                     .IsUnicode(false);
@@ -217,8 +290,6 @@ namespace API_DACN.Database
                     .IsRequired()
                     .HasMaxLength(10)
                     .IsUnicode(false);
-
-                entity.Property(e => e.Status).HasColumnName("status");
 
                 entity.Property(e => e.Time)
                     .IsRequired()
@@ -274,7 +345,15 @@ namespace API_DACN.Database
                     .IsRequired()
                     .HasMaxLength(256);
 
+                entity.Property(e => e.PhoneRestaurant)
+                    .IsRequired()
+                    .HasMaxLength(15);
+
                 entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.StatusCo)
+                    .HasMaxLength(20)
+                    .HasColumnName("statusCO");
 
                 entity.Property(e => e.UserId)
                     .IsRequired()
@@ -291,7 +370,7 @@ namespace API_DACN.Database
             modelBuilder.Entity<RestaurantDetail>(entity =>
             {
                 entity.HasKey(e => new { e.RestaurantId, e.CategoryId })
-                    .HasName("PK__Restaura__26D5DF35A522BC76");
+                    .HasName("PK__Restaura__26D5DF352072BB60");
 
                 entity.ToTable("RestaurantDetails", "dbo");
 
@@ -303,13 +382,13 @@ namespace API_DACN.Database
                     .WithMany(p => p.RestaurantDetails)
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Restauran__Categ__6477ECF3");
+                    .HasConstraintName("FK_RestaurantDetails_CategoryRestaurant");
 
                 entity.HasOne(d => d.Restaurant)
                     .WithMany(p => p.RestaurantDetails)
                     .HasForeignKey(d => d.RestaurantId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Restauran__Resta__656C112C");
+                    .HasConstraintName("FK_RestaurantDetails_Restaurant");
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -320,11 +399,6 @@ namespace API_DACN.Database
                     .HasMaxLength(7)
                     .IsUnicode(false)
                     .HasDefaultValueSql("([dbo].[AUTO_UserID]())");
-
-                entity.Property(e => e.FullName)
-                    .IsRequired()
-                    .HasMaxLength(256)
-                    .IsUnicode(false);
 
                 entity.Property(e => e.Gender)
                     .IsRequired()

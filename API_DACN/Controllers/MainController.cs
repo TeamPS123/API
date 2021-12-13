@@ -164,5 +164,20 @@ namespace API_DACN.Controllers
             }
             return Ok(new Object.Get.Message_ProList(1, "Lấy dữ liệu thành công", result));
         }
+
+        [HttpGet]
+        [Route("getAllRateRes")]
+        public IActionResult getAllRateRes(string restaurantId, int value, int skip, int take)
+        {
+            var rates = model.getAllRate(restaurantId, value, skip, take);
+
+            if (rates == null)
+            {
+                return Ok(new Object.Get.Message_Rate(0, "Lấy dữ liệu thất bại", "0", null));
+            }
+
+            var rateTotal = model.rateTotal(restaurantId);
+            return Ok(new Object.Get.Message_Rate(1, "Lấy dữ liệu thành công", rateTotal, rates));
+        }
     }
 }

@@ -11,6 +11,7 @@ namespace API_DACN.Database
         {
             Menus = new HashSet<Menu>();
             Promotions = new HashSet<Promotion>();
+            Rates = new HashSet<Rate>();
             RestaurantDetails = new HashSet<RestaurantDetail>();
         }
 
@@ -25,11 +26,12 @@ namespace API_DACN.Database
         public string OpenTime { get; set; }
         public string CloseTime { get; set; }
         public string PhoneRestaurant { get; set; }
-        public string statusCO { get; set; }
+        public string StatusCo { get; set; }
 
         public virtual User User { get; set; }
         public virtual ICollection<Menu> Menus { get; set; }
         public virtual ICollection<Promotion> Promotions { get; set; }
+        public virtual ICollection<Rate> Rates { get; set; }
         public virtual ICollection<RestaurantDetail> RestaurantDetails { get; set; }
     }
 }

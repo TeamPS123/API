@@ -9,6 +9,7 @@ namespace API_DACN.Database
     {
         public User()
         {
+            Rates = new HashSet<Rate>();
             ReserveTables = new HashSet<ReserveTable>();
             Restaurants = new HashSet<Restaurant>();
         }
@@ -20,6 +21,7 @@ namespace API_DACN.Database
         public bool IsBusiness { get; set; }
         public bool? Gender { get; set; }
 
+        public virtual ICollection<Rate> Rates { get; set; }
         public virtual ICollection<ReserveTable> ReserveTables { get; set; }
         public virtual ICollection<Restaurant> Restaurants { get; set; }
     }

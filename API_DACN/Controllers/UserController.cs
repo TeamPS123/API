@@ -146,5 +146,41 @@ namespace API_DACN.Controllers
             }
             return Ok(new Object.Message(1, "Cập nhật thông tin thành công", null));
         }
+
+        [HttpGet]
+        [Route("getNotifications")]
+        public IActionResult getNotifications(string userId)
+        {
+            if (token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+
+            var result = userModel.getNotifications(userId);
+
+            if (result == null)
+            {
+                return Ok(new Object.Get.Message_Notification(0, "Lấy dữ liệu thất bại", null));
+            }
+            return Ok(new Object.Get.Message_Notification(1, "Cập nhật thông tin thành công", result));
+        }
+
+        [HttpPost]
+        [Route("ratingRes")]
+        public IActionResult ratingRes(Object.Input.InputComment comment)
+        {
+            if (token.GetPhoneWithToken(Request.Headers) != comment.userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+
+            var result = userModel.ratingRes(comment);
+
+            if (result == null)
+            {
+                return Ok(new Object.Message(0, "Thêm đánh giá thất bại", null));
+            }
+            return Ok(new Object.Message(1, "Thêm đánh giá thành công", result));
+        }
     }
 }

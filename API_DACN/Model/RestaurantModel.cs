@@ -27,7 +27,7 @@ namespace API_DACN.Model
                        {
                            id = a.Id,
                            name = a.Name,
-                           icon = a.icon,
+                           icon = a.Icon,
                        };
             }
             catch
@@ -38,22 +38,68 @@ namespace API_DACN.Model
 
 
         //------------------------------restaurant-----------------------------------
-        public Object.Get.GetStaticRes getStaticRes(string restaurantId)
+        public IEnumerable<Object.Get.GetRating> getAllRate(string restaurantId, int value, int skip, int take)
         {
             try
             {
-                return (from a in db.Restaurants
-                       where a.Id == restaurantId
-                       select new Object.Get.GetStaticRes()
-                       {
-                           amount_today = "5",
-                           amount_toweek = "20",
-                           statusRes = a.Status
-                       }).FirstOrDefault();
+                var result = (from a in db.Rates
+                              where a.RestaurantId == restaurantId
+                              orderby a.Date descending
+                              select new Object.Get.GetRating()
+                              {
+                                  Id = a.Id,
+                                  content = a.Content,
+                                  value = a.Value,
+                                  UserId = a.UserId,
+                                  RestaurantId = a.RestaurantId,
+                                  date = a.Date,
+                                  UserName = a.User.FullName,
+                                  imageUser = db.Images.Where(t => t.UserId == a.UserId && t.RestaurantId == "0").Select(c => c.Link).FirstOrDefault(),
+                              }).Skip(skip).Take(take);
+
+                if(value != -1)
+                {
+                    result = result.Where(t => t.value == value);
+                }
+
+                return result;
             }
             catch
             {
                 return null;
+            }
+        }
+
+        public string rateTotal(string restaurantId)
+        {
+            try
+            {
+                var result = db.Rates.Where(t => t.RestaurantId == restaurantId);
+
+                float count = result.Count();
+                float sum = result.Sum(t => t.Value);
+
+                return (sum / count).ToString("0.0");
+            }
+            catch
+            {
+                return "0";
+            }
+        }
+        
+        public bool checkRes(string userId)
+        {
+            try
+            {
+                if(db.Restaurants.Where(t => t.UserId == userId).Count() > 0)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                return false; 
             }
         }
 
@@ -112,11 +158,6 @@ namespace API_DACN.Model
                 return false;
             }
             return true;
-        }
-
-        public void getResDetail(string restaurantId)
-        {
-
         }
 
         public string retaurantId(string userId)
@@ -179,7 +220,7 @@ namespace API_DACN.Model
                 data.OpenTime = restaurant.openTime;
                 data.CloseTime = restaurant.closeTime;
                 data.Status = restaurant.status;
-                data.statusCO = restaurant.statusCO;
+                data.StatusCo = restaurant.statusCO;
                 db.SaveChanges();
             }
             catch
@@ -208,7 +249,7 @@ namespace API_DACN.Model
                                  closeTime = a.CloseTime,
                                  phoneRes = a.PhoneRestaurant,
                                  status = a.Status,
-                                 statusCO = a.statusCO,
+                                 statusCO = a.StatusCo,
                                  mainPic = db.Images.Where(t => t.RestaurantId == restaurantId && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                                  pic = GetImage.getImageWithRes(restaurantId, db),
                                  categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()), 
@@ -227,7 +268,7 @@ namespace API_DACN.Model
                                                {
                                                    id = b.CategoryId,
                                                    name = b.Category.Name,
-                                                   icon = b.Category.icon
+                                                   icon = b.Category.Icon
                                                }
                              };
 
@@ -258,7 +299,7 @@ namespace API_DACN.Model
                                  closeTime = a.Restaurant.CloseTime,
                                  phoneRes = a.Restaurant.PhoneRestaurant,
                                  status = a.Restaurant.Status,
-                                 statusCO = a.Restaurant.statusCO,
+                                 statusCO = a.Restaurant.StatusCo,
                                  mainPic = db.Images.Where(t => t.RestaurantId == a.RestaurantId && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                                  pic = GetImage.getImageWithRes(a.RestaurantId, db),
                                  categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.RestaurantId).Select(c => c.Category.Name).ToList()),
@@ -277,7 +318,7 @@ namespace API_DACN.Model
                                                {
                                                    id = b.CategoryId,
                                                    name = b.Category.Name,
-                                                   icon = b.Category.icon
+                                                   icon = b.Category.Icon
                                                }
                              };
 
@@ -308,7 +349,7 @@ namespace API_DACN.Model
                                  closeTime = a.CloseTime,
                                  phoneRes = a.PhoneRestaurant,
                                  status = a.Status,
-                                 statusCO = a.statusCO,
+                                 statusCO = a.StatusCo,
                                  mainPic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                                  pic = GetImage.getImageWithRes(a.Id, db),
                                  categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
@@ -327,7 +368,7 @@ namespace API_DACN.Model
                                                {
                                                    id = b.CategoryId,
                                                    name = b.Category.Name,
-                                                   icon = b.Category.icon
+                                                   icon = b.Category.Icon
                                                }
                              };
 
@@ -352,7 +393,7 @@ namespace API_DACN.Model
                        promotionId = reserveTable.PromotionId,
                        name = reserveTable.Name,
                        phone = reserveTable.PhoneNumber,
-                       note = reserveTable.note,
+                       note = reserveTable.Note,
                        userId = reserveTable.UserId
                    };
         }
@@ -514,7 +555,7 @@ namespace API_DACN.Model
                                              unit = b.Unit,
                                              categoryName = b.Category.Name,
                                              categoryId = b.CategoryId,
-                                             status = b.status,
+                                             status = b.Status,
                                              pic = (List<string>)(from c in db.Images
                                                                   where c.FoodId == b.Id
                                                                   select c.Link)
@@ -538,8 +579,8 @@ namespace API_DACN.Model
                 Category c = new Category();
                 c.Id = categoryId;
                 c.Name = category.name;
-                c.status = true;
-                c.key_word = Regex1.RemoveUnicode(category.name);
+                c.Status = true;
+                c.KeyWord = Regex1.RemoveUnicode(category.name);
                 db.Categories.Add(c);
                 db.SaveChanges();
             }
@@ -559,7 +600,7 @@ namespace API_DACN.Model
                        {
                            id = a.Id,
                            name = a.Name,
-                           status = a.status
+                           status = a.Status
                        };
             }
             catch
@@ -578,7 +619,7 @@ namespace API_DACN.Model
                              {
                                  id = a.Id,
                                  name = a.Name,
-                                 icon = a.icon,
+                                 icon = a.Icon,
                              };
 
                 return result;
@@ -630,8 +671,8 @@ namespace API_DACN.Model
                     Unit = f.unit,
                     MenuId = f.menuId,
                     CategoryId = f.categoryId,
-                    status = true,
-                    key_word = Regex1.RemoveUnicode(f.name),
+                    Status = true,
+                    KeyWord = Regex1.RemoveUnicode(f.name),
                 };
                 db.Foods.Add(food);
                 db.SaveChanges();
@@ -653,7 +694,7 @@ namespace API_DACN.Model
                 data.Price = food.price;
                 data.Unit = food.unit;
                 data.CategoryId = food.categoryId;
-                data.status = food.status;
+                data.Status = food.status;
                 db.SaveChanges();
             }
             catch
@@ -745,7 +786,7 @@ namespace API_DACN.Model
                                  unit = a.Food.Unit,
                                  categoryId = a.Food.CategoryId,
                                  categoryName = a.Food.Category.Name,
-                                 status = a.Food.status,
+                                 status = a.Food.Status,
                                  pic = (List<string>)(from c in db.Images
                                                       where c.FoodId == a.Food.Id
                                                       select c.Link)
@@ -800,7 +841,7 @@ namespace API_DACN.Model
                     Name = promotion.name,
                     Info = promotion.info,
                     Value = promotion.value,
-                    status = true,
+                    Status = true,
                 };
                 db.Promotions.Add(p);
                 db.SaveChanges();
@@ -820,7 +861,7 @@ namespace API_DACN.Model
                 data.Name = promotion.name;
                 data.Info = promotion.info;
                 data.Value = promotion.value;
-                data.status = promotion.status;
+                data.Status = promotion.status;
                 db.SaveChanges();
             }
             catch
@@ -842,7 +883,7 @@ namespace API_DACN.Model
                            name = a.Name,
                            info = a.Info,
                            value = a.Value,
-                           status = a.status,
+                           status = a.Status,
                            line = a.Restaurant.Line,
                            district = a.Restaurant.District,
                            city = a.Restaurant.City,
@@ -868,7 +909,7 @@ namespace API_DACN.Model
                            name = a.Name,
                            value = a.Value,
                            info = a.Info,
-                           status = a.status,
+                           status = a.Status,
                        };
             }
             catch

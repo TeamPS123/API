@@ -15,7 +15,7 @@ namespace API_DACN.Database
         public string Id { get; set; }
         public string RestaurantId { get; set; }
         public string Name { get; set; }
-        public bool ? status { get; set; }
+        public bool? Status { get; set; }
 
         public virtual Restaurant Restaurant { get; set; }
         public virtual ICollection<Food> Foods { get; set; }

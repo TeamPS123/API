@@ -278,7 +278,10 @@ namespace API_DACN.Controllers
             return Ok(new Object.Message(1, "Thêm loại thức ăn thành công", add));
         }
 
-        //------------------------------reserveTable-----------------------------------
+//----------------------------------------restautant-----------------------------------
+
+
+//---------------------------------------reserveTable-----------------------------------
         [Route("getFoodsByResId")]
         [HttpGet]
         public IActionResult getFoodsByResId(string userId, string reserveTableId)
@@ -296,7 +299,7 @@ namespace API_DACN.Controllers
             return Ok(new Object.Get.Message_ReserveTableDetail(1, "Thêm loại thức ăn thành công", add));
         }
 
-        //------------------------------food-----------------------------------
+//-------------------------------------------food-----------------------------------
         [Route("addFoods")]
         [HttpPost]
         public IActionResult AddFoods(Object.Input.InputFood menu)

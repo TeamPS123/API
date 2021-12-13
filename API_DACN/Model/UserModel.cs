@@ -30,7 +30,7 @@ namespace API_DACN.Model
                        promotionId = reserveTable.PromotionId,
                        name = reserveTable.Name,
                        phone = reserveTable.PhoneNumber,
-                       note = reserveTable.note,
+                       note = reserveTable.Note,
                        status = reserveTable.Status,
                        restaurant = (from b in db.Restaurants
                                      where b.Id == reserveTable.RestaurantId
@@ -48,7 +48,7 @@ namespace API_DACN.Model
                                          distance = Distance.distance(b.LongLat, lngLat).ToString(),
                                          phoneRes = b.PhoneRestaurant,
                                          status = b.Status,
-                                         statusCO = b.statusCO,
+                                         statusCO = b.StatusCo,
                                          mainPic = db.Images.Where(t => t.RestaurantId == b.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                                          pic = GetImage.getImageWithRes(b.Id, db),
                                          categoryResStr = Other.Convert.ConvertListToString(b.RestaurantDetails.Select(c => c.Category.Name).ToList()),
@@ -65,7 +65,7 @@ namespace API_DACN.Model
                                                        {
                                                            id = d.CategoryId,
                                                            name = d.Category.Name,
-                                                           icon = d.Category.icon
+                                                           icon = d.Category.Icon
                                                        }
                                      }).FirstOrDefault()
                    };
@@ -83,7 +83,7 @@ namespace API_DACN.Model
                        promotionId = reserveTable.PromotionId,
                        name = reserveTable.Name,
                        phone = reserveTable.PhoneNumber,
-                       note = reserveTable.note,
+                       note = reserveTable.Note,
                        status = reserveTable.Status,
                        restaurant = (from b in db.Restaurants
                                      where b.Id == reserveTable.RestaurantId
@@ -101,7 +101,7 @@ namespace API_DACN.Model
                                          distance = "Không xác đinh",
                                          phoneRes = b.PhoneRestaurant,
                                          status = b.Status,
-                                         statusCO = b.statusCO,
+                                         statusCO = b.StatusCo,
                                          mainPic = db.Images.Where(t => t.RestaurantId == b.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                                          pic = GetImage.getImageWithRes(b.Id, db),
                                          categoryResStr = Other.Convert.ConvertListToString(b.RestaurantDetails.Select(c => c.Category.Name).ToList()),
@@ -118,7 +118,7 @@ namespace API_DACN.Model
                                                        {
                                                            id = d.CategoryId,
                                                            name = d.Category.Name,
-                                                           icon = d.Category.icon
+                                                           icon = d.Category.Icon
                                                        }
                                      }).FirstOrDefault()
                    }).FirstOrDefault();
@@ -141,7 +141,7 @@ namespace API_DACN.Model
                     UserId = input.userId,
                     Name = input.name,
                     PhoneNumber = input.phone,
-                    note = input.note,
+                    Note = input.note,
                     Day = Other.Convert.ConvertDateTimeToString_FromClient(input.time)
                 };
                 db.ReserveTables.Add(reserve);
@@ -232,6 +232,54 @@ namespace API_DACN.Model
                 return false;
             }
             return true;
+        }
+
+        public IEnumerable<Object.Get.GetNotification> getNotifications(string userId)
+        {
+            try
+            {
+                return (from a in db.ReserveTables
+                       where a.Status != 0
+                       orderby a.Id descending
+                       select new Object.Get.GetNotification()
+                       {
+                           resName = db.Restaurants.Where(t => t.Id == a.RestaurantId).Select(c => c.Name).FirstOrDefault(),
+                           img = db.Images.Where(t => t.RestaurantId == a.RestaurantId && t.FoodId != "0").Select(c => c.Link).FirstOrDefault(),
+                           time = a.Time,
+                           userId = a.UserId,
+                           reserveTableId = a.Id,
+                           status = a.Status,
+                           resId = a.RestaurantId,
+                       }).Take(5);
+
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public string ratingRes(Object.Input.InputComment comment)
+        {
+            try
+            {
+                var rating = new Database.Rate();
+                rating.Content = comment.content;
+                rating.Value = comment.value;
+                rating.UserId = comment.userId;
+                rating.RestaurantId = comment.RestaurantId;
+                rating.Date = comment.date;
+                db.Rates.Add(rating);
+                db.SaveChanges();
+
+                string id = db.Rates.OrderByDescending(c => c.Id).Select(t => t.Id).FirstOrDefault()+"";
+
+                return id;
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
         }
     }
 }

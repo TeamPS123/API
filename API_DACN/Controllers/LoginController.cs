@@ -16,11 +16,13 @@ namespace API_DACN.Controllers
     public class LoginController : ControllerBase
     {
         private LoginModel userModel;
+        private RestaurantModel resModel;
         private Other.Token token;
 
         public LoginController(IConfiguration config, food_location_dbContext db)
         {
             userModel = new LoginModel(db);
+            resModel = new RestaurantModel(db);
             token = new Other.Token(config, db);
         }
 
@@ -42,6 +44,18 @@ namespace API_DACN.Controllers
             return Ok(new Message(1, token.GetToken(result), result));
         }
 
+        [Route("checkPhone")]
+        [HttpGet]
+        public IActionResult checkPhone(string phone)
+        {
+            var check = userModel.CheckPhone(phone);
+            if (check)
+            {
+                return Ok(new Message(0, "Số điện thoại đã có tài khoản", null));
+            }
+            return Ok(new Message(1, "Số điện thoại chưa có tài khoản", null));
+        }
+
         [Route("signin")]
         [HttpPost]
         public IActionResult Login(Object.UserLogin user)
@@ -52,6 +66,19 @@ namespace API_DACN.Controllers
                 return Ok(new Message(0, "Tài khoản hoặc mật khẩu đã sai", null));
             }
             return Ok(new Message(1, token.GetToken(data), data));
+        }
+
+        //kiểm tra user đăng nhập vào ứng quản lí có nhà hàng chưa
+        [Route("checkRes")]
+        [HttpGet]
+        public IActionResult checkRes(string userId)
+        {
+            var check = resModel.checkRes(userId);
+            if (!check)
+            {
+                return Ok(new Object.Message(0, "Vui lòng đăng ký tài khoản dành cho quản lí", null));
+            }
+            return Ok(new Object.Message(1, "Tài khoản đã có nhà hàng", null));
         }
     }
 }
