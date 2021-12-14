@@ -38,6 +38,38 @@ namespace API_DACN.Model
 
 
         //------------------------------restaurant-----------------------------------
+        public Object.Get.GetStatis getStatis(string restaurantId, string day, string month, string year)
+        {
+            try
+            {
+                IEnumerable<Database.ReserveTable> reserveTables = from a in db.ReserveTables
+                                                                   where a.RestaurantId == restaurantId
+                                                                   select a;
+
+                List<Database.ReserveTable> reserveTables1 = new List<ReserveTable>();
+                foreach(var item in reserveTables)
+                {
+                    if(Other.Date.checkDate(item.Day, day, month, year) == true)
+                    {
+                        reserveTables1.Add(item);
+                    }
+                }
+
+                Object.Get.GetStatis statis = new Object.Get.GetStatis();
+                statis.amountWait = reserveTables1.Where(t => t.Status == 0).Count() + "";
+                statis.amountConfirm = reserveTables1.Where(t => t.Status == 1).Count() + "";
+                statis.amountDeny = reserveTables1.Where(t => t.Status == 2).Count() + "";
+                statis.amountComplete = reserveTables1.Where(t => t.Status == 4).Count() + "";
+                statis.amountExpired = reserveTables1.Where(t => t.Status == 3).Count() + "";
+
+                return statis;
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
+        }
+
         public IEnumerable<Object.Get.GetRating> getAllRate(string restaurantId, int value, int skip, int take)
         {
             try

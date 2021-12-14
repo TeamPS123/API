@@ -279,7 +279,22 @@ namespace API_DACN.Controllers
         }
 
 //----------------------------------------restautant-----------------------------------
+        [Route("getStaticRes")]
+        [HttpGet]
+        public IActionResult GetStaticRes(string userId, string restaurantId, string day, string month, string year)
+        {
+            if (Token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
 
+            var add = res_model.getStatis(restaurantId, day, month, year);
+            if (add == null)
+            {
+                return Ok(new Object.Get.Message_Statis(0, "Lấy dữ liệu thất bại", null));
+            }
+            return Ok(new Object.Get.Message_Statis(1, "Lấy dữ liệu thành công", add));
+        }
 
 //---------------------------------------reserveTable-----------------------------------
         [Route("getFoodsByResId")]
