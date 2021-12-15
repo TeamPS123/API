@@ -140,7 +140,79 @@ namespace API_DACN.Model
                 return null;
             }
         }
-        
+
+        public IEnumerable<Object.Get.GetReview> getAllReview(string restaurantId, int value, int skip, int take)
+        {
+            try
+            {
+                var result = (from a in db.Reviews
+                              where a.RestaurantId == restaurantId
+                              orderby a.Date descending
+                              select new Object.Get.GetReview()
+                              {
+                                  Id = a.Id,
+                                  content = a.Content,
+                                  value = a.Value,
+                                  UserId = a.UserId,
+                                  RestaurantId = a.RestaurantId,
+                                  date = a.Date,
+                                  UserName = db.Users.Where(t => t.Id == a.UserId).Select(c => c.FullName).FirstOrDefault(),
+                                  countLike = a.CountLike,
+                                  imageUser = db.Images.Where(t => t.UserId == a.UserId && t.RestaurantId == "0").Select(c => c.Link).FirstOrDefault(),
+                              }).Skip(skip).Take(take);
+
+                if (value != -1)
+                {
+                    result = result.Where(t => t.value == value);
+                }
+
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public string reviewTotal(string restaurantId)
+        {
+            try
+            {
+                var result = db.Reviews.Where(t => t.RestaurantId == restaurantId);
+
+                float count = result.Count();
+                float sum = result.Sum(t => t.Value);
+
+                return (sum / count).ToString("0.0");
+            }
+            catch
+            {
+                return "0";
+            }
+        }
+
+        public Object.Get.GetCountRating getCountReview(string restaurantId)
+        {
+            try
+            {
+                var rates = db.Reviews.Where(t => t.RestaurantId == restaurantId);
+
+                var result = new Object.Get.GetCountRating();
+                result.count = rates.Count() + "";
+                result.count1 = rates.Where(t => t.Value == 1).Count() + "";
+                result.count2 = rates.Where(t => t.Value == 2).Count() + "";
+                result.count3 = rates.Where(t => t.Value == 3).Count() + "";
+                result.count4 = rates.Where(t => t.Value == 4).Count() + "";
+                result.count5 = rates.Where(t => t.Value == 5).Count() + "";
+
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public bool checkRes(string userId)
         {
             try

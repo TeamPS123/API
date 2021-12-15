@@ -180,5 +180,21 @@ namespace API_DACN.Controllers
             var count = model.getCountRating(restaurantId);
             return Ok(new Object.Get.Message_Rate(1, "Lấy dữ liệu thành công", rateTotal, count, rates));
         }
+
+        [HttpGet]
+        [Route("getAllReviewRes")]
+        public IActionResult getAllReviewRes(string restaurantId, int value, int skip, int take)
+        {
+            var reviews = model.getAllReview(restaurantId, value, skip, take);
+
+            if (reviews == null)
+            {
+                return Ok(new Object.Get.Message_Review(0, "Lấy dữ liệu thất bại", "0", null, null));
+            }
+
+            var rateTotal = model.reviewTotal(restaurantId);
+            var count = model.getCountReview(restaurantId);
+            return Ok(new Object.Get.Message_Review(1, "Lấy dữ liệu thành công", rateTotal, count, reviews));
+        }
     }
 }

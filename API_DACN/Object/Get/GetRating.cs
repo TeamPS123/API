@@ -27,7 +27,6 @@ namespace API_DACN.Object.Get
         public string count5 { get; set; }
     }
 
-
     public class Message_Rate
     {
         private int status;
@@ -50,5 +49,42 @@ namespace API_DACN.Object.Get
         public string RateTotal { get => rateTotal; set => rateTotal = value; }
         public GetCountRating CountRating { get => countRating; set => countRating = value; }
         public IEnumerable<GetRating> Rates { get => rates; set => rates = value; }
+    }
+
+    public class GetReview
+    {
+        public int Id { get; set; }
+        public string content { get; set; }
+        public int value { get; set; }
+        public string UserId { get; set; }
+        public string RestaurantId { get; set; }
+        public string date { get; set; }
+        public string UserName { get; set; }
+        public string imageUser { get; set; }
+        public long ? countLike { get; set; }
+    }
+
+    public class Message_Review
+    {
+        private int status;
+        private string notification;
+        private string reviewTotal;
+        private GetCountRating countRating;
+        private IEnumerable<GetReview> reviews;
+
+        public Message_Review(int status, string notification, string reviewTotal, GetCountRating countRating, IEnumerable<GetReview> reviews)
+        {
+            this.status = status;
+            this.notification = notification;
+            this.reviewTotal = reviewTotal;
+            this.countRating = countRating;
+            this.reviews = reviews;
+        }
+
+        public int Status { get => status; set => status = value; }
+        public string Notification { get => notification; set => notification = value; }
+        public string ReviewTotal { get => reviewTotal; set => reviewTotal = value; }
+        public GetCountRating CountRating { get => countRating; set => countRating = value; }
+        public IEnumerable<GetReview> Reviews { get => reviews; set => reviews = value; }
     }
 }

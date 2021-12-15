@@ -182,5 +182,41 @@ namespace API_DACN.Controllers
             }
             return Ok(new Object.Message(1, "Thêm đánh giá thành công", result));
         }
+
+        [HttpPost]
+        [Route("review")]
+        public IActionResult review(Object.Input.InputComment review)
+        {
+            if (token.GetPhoneWithToken(Request.Headers) != review.userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+
+            var result = userModel.review(review);
+
+            if (result == null)
+            {
+                return Ok(new Object.Message(0, "Thêm đánh giá thất bại", null));
+            }
+            return Ok(new Object.Message(1, "Thêm đánh giá thành công", result));
+        }
+
+        [HttpGet]
+        [Route("likeReview")]
+        public IActionResult likeReview(string userId, int reviewId)
+        {
+            if (token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+
+            var result = userModel.likeReview(reviewId);
+
+            if (!result)
+            {
+                return Ok(new Object.Message(0, "thích đánh giá thất bại", null));
+            }
+            return Ok(new Object.Message(1, "thích đánh giá thành công", null));
+        }
     }
 }

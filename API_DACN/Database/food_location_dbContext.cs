@@ -26,8 +26,10 @@ namespace API_DACN.Database
         public virtual DbSet<ReserveTable> ReserveTables { get; set; }
         public virtual DbSet<Restaurant> Restaurants { get; set; }
         public virtual DbSet<RestaurantDetail> RestaurantDetails { get; set; }
+        public virtual DbSet<Review> Reviews { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public DbSet<NextIdViewModel> NextIdViewModel { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -389,6 +391,25 @@ namespace API_DACN.Database
                     .HasForeignKey(d => d.RestaurantId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_RestaurantDetails_Restaurant");
+            });
+
+            modelBuilder.Entity<Review>(entity =>
+            {
+                entity.ToTable("Review", "pamlelr98");
+
+                entity.Property(e => e.Content).IsRequired();
+
+                entity.Property(e => e.Date).HasMaxLength(20);
+
+                entity.Property(e => e.RestaurantId)
+                    .IsRequired()
+                    .HasMaxLength(6)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasMaxLength(7)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<User>(entity =>

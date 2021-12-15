@@ -281,5 +281,47 @@ namespace API_DACN.Model
                 return null;
             }
         }
+
+        public string review(Object.Input.InputComment review)
+        {
+
+            try
+            {
+                var reviewRes = new Database.Review();
+                reviewRes.Content = review.content;
+                reviewRes.Value = review.value;
+                reviewRes.UserId = review.userId;
+                reviewRes.RestaurantId = review.RestaurantId;
+                reviewRes.Date = review.date;
+                reviewRes.CountLike = 0;
+                db.Reviews.Add(reviewRes);
+                db.SaveChanges();
+
+                string id = db.Reviews.OrderByDescending(c => c.Id).Select(t => t.Id).FirstOrDefault() + "";
+
+                return id;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        public bool likeReview(int reviewId)
+        {
+            try
+            {
+                var result = db.Reviews.Find(reviewId);
+                long? count = result.CountLike;
+                count++;
+                result.CountLike = count;
+                db.SaveChanges();
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

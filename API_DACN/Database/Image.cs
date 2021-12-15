@@ -14,5 +14,7 @@ namespace API_DACN.Database
         public string CategoryId { get; set; }
         public int Id { get; set; }
         public string Path { get; set; }
+        public int? RateId { get; set; }
+        public int? ReviewId { get; set; }
     }
 }

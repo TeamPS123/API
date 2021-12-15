@@ -11,11 +11,13 @@ namespace API_DACN.Model
     {
         private readonly food_location_dbContext db;
         private NextId setId;
+        private string domain = "https://ps.covid21tsp.space/Picture/"; 
 
         public ImageModel(food_location_dbContext db)
         {
             this.db = db;
             setId = new NextId(db);
+            domain = "https://ps.covid21tsp.space/Picture/";
         }
 
         //public void AddImage(string filename, string foodId, string restaurantId, string userId, string categoryId)
@@ -38,12 +40,14 @@ namespace API_DACN.Model
             {
                 Image image = new Image()
                 {
-                    Link = "https://ps.covid21tsp.space/Picture/" + filename,
+                    Link = domain + filename,
                     FoodId = "0",
                     RestaurantId = "0",
                     UserId = userId,
                     CategoryId = "0",
                     Path = path,
+                    ReviewId = 0,
+                    RateId = 0,
                 };
                 db.Images.Add(image);
                 db.SaveChanges();
@@ -61,12 +65,14 @@ namespace API_DACN.Model
             {
                 Image image = new Image()
                 {
-                    Link = "https://ps.covid21tsp.space/Picture/" + filename,
+                    Link = domain + filename,
                     FoodId = "0",
                     RestaurantId = restaurantId,
                     UserId = userId,
                     CategoryId = "0",
                     Path = path,
+                    ReviewId = 0,
+                    RateId = 0,
                 };
                 db.Images.Add(image);
                 db.SaveChanges();
@@ -82,7 +88,7 @@ namespace API_DACN.Model
         {
             try
             {
-                string link = "https://ps.covid21tsp.space/Picture/" + filename;
+                string link = domain + filename;
                 Image image = new Image()
                 {
                     Link = link,
@@ -91,6 +97,8 @@ namespace API_DACN.Model
                     UserId = userId,
                     CategoryId = "0",
                     Path = path,
+                    ReviewId = 0,
+                    RateId = 0,
                 };
                 db.Images.Add(image);
                 db.SaveChanges();
