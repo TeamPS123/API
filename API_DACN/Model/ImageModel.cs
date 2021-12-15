@@ -111,6 +111,60 @@ namespace API_DACN.Model
             }
         }
 
+        public string AddImageOfRate(string filename, int rateId, string path)
+        {
+            try
+            {
+                string link = domain + filename;
+                Image image = new Image()
+                {
+                    Link = link,
+                    FoodId = "0",
+                    RestaurantId = "0",
+                    UserId = "0",
+                    CategoryId = "0",
+                    Path = path,
+                    ReviewId = 0,
+                    RateId = rateId,
+                };
+                db.Images.Add(image);
+                db.SaveChanges();
+
+                return link;
+            }
+            catch
+            {
+                return "null";
+            }
+        }
+
+        public string AddImageOfReview(string filename, int reviewId, string path)
+        {
+            try
+            {
+                string link = domain + filename;
+                Image image = new Image()
+                {
+                    Link = link,
+                    FoodId = "0",
+                    RestaurantId = "0",
+                    UserId = "0",
+                    CategoryId = "0",
+                    Path = path,
+                    ReviewId = reviewId,
+                    RateId = 0,
+                };
+                db.Images.Add(image);
+                db.SaveChanges();
+
+                return link;
+            }
+            catch
+            {
+                return "null";
+            }
+        }
+
         public List<string> DelImageOfFood(string foodId)
         {
             List<string> ImgList = null;

@@ -1,5 +1,6 @@
 ﻿using API_DACN.Database;
 using API_DACN.Model;
+using API_DACN.Other;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -161,6 +162,84 @@ namespace API_DACN.Controllers
                     if (!System.IO.File.Exists(imaageSavePath))
                     {
                         link = imageModel.AddImageOfFood(name[0] + "_" + foodId + "." + name[1], userId, restaurantId, foodId, imaageSavePath);
+                        if (link == "null")
+                        {
+                            return Ok(new Object.Message(0, "Thêm ảnh thất bại", null));
+                        }
+                        var stream = System.IO.File.Create(imaageSavePath);
+                        item.CopyToAsync(stream);
+                    }
+                }
+            }
+            catch
+            {
+                return Ok(new Object.Message(0, "Thêm ảnh thất bại", null));
+            }
+            return Ok(new Object.Message(1, "Thêm ảnh thành công", link));
+        }
+
+        [Route("upImageOfRate")]
+        [HttpPost]
+        [RequestFormSizeLimit(valueCountLimit: 104857600)]
+        public IActionResult upImageOfRate(string userId, int rateId)
+        {
+            if (Token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+
+            string contentRootPath = _HostEnvironment.ContentRootPath;
+            string link = "";
+
+            try
+            {
+                var photo = HttpContext.Request.Form.Files;
+                foreach (var item in photo)
+                {
+                    string[] name = item.FileName.Split(".");
+                    var imaageSavePath = Path.Combine(contentRootPath, "Picture", name[0] + "_Rate" + rateId + "." + name[1]);
+                    if (!System.IO.File.Exists(imaageSavePath))
+                    {
+                        link = imageModel.AddImageOfRate(name[0] + "_Rate" + rateId + "." + name[1], rateId, imaageSavePath);
+                        if (link == "null")
+                        {
+                            return Ok(new Object.Message(0, "Thêm ảnh thất bại", null));
+                        }
+                        var stream = System.IO.File.Create(imaageSavePath);
+                        item.CopyToAsync(stream);
+                    }
+                }
+            }
+            catch
+            {
+                return Ok(new Object.Message(0, "Thêm ảnh thất bại", null));
+            }
+            return Ok(new Object.Message(1, "Thêm ảnh thành công", link));
+        }
+
+        [Route("upImageOfReview")]
+        [HttpPost]
+        [RequestFormSizeLimit(valueCountLimit: 104857600)]
+        public IActionResult upImageOfReview(string userId, int reviewId)
+        {
+            if (Token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+
+            string contentRootPath = _HostEnvironment.ContentRootPath;
+            string link = "";
+
+            try
+            {
+                var photo = HttpContext.Request.Form.Files;
+                foreach (var item in photo)
+                {
+                    string[] name = item.FileName.Split(".");
+                    var imaageSavePath = Path.Combine(contentRootPath, "Picture", name[0] + "_Review" + reviewId + "." + name[1]);
+                    if (!System.IO.File.Exists(imaageSavePath))
+                    {
+                        link = imageModel.AddImageOfReview(name[0] + "_Review" + reviewId + "." + name[1], reviewId, imaageSavePath);
                         if (link == "null")
                         {
                             return Ok(new Object.Message(0, "Thêm ảnh thất bại", null));
