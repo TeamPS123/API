@@ -425,3 +425,13 @@ C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Debug\net5.0\API_DACN.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Debug\net5.0\ref\API_DACN.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Debug\net5.0\API_DACN.pdb
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Debug\net5.0\API_DACN.genruntimeconfig.cache
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\bin\Debug\net5.0\API_DACN.Views.dll
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\bin\Debug\net5.0\API_DACN.Views.pdb
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Debug\net5.0\API_DACN.RazorAssemblyInfo.cache
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Debug\net5.0\API_DACN.RazorAssemblyInfo.cs
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Debug\net5.0\API_DACN.TagHelpers.input.cache
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Debug\net5.0\API_DACN.TagHelpers.output.cache
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Debug\net5.0\API_DACN.RazorCoreGenerate.cache
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Debug\net5.0\Razor\Views\Share\Code.cshtml.g.cs
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Debug\net5.0\API_DACN.RazorTargetAssemblyInfo.cs
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Debug\net5.0\API_DACN.Views.pdb

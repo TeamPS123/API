@@ -10,10 +10,12 @@ namespace API_DACN.Model
     public class SearchModel
     {
         private readonly food_location_dbContext db;
+        private RestaurantModel res_model;
 
         public SearchModel(food_location_dbContext db)
         {
             this.db = db;
+            res_model = new RestaurantModel(db);
         }
 
         //Restaurant list distance <= 5km
@@ -311,6 +313,7 @@ namespace API_DACN.Model
                                statusCO = a.StatusCo,
                                mainPic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                                pic = GetImage.getImageWithRes(a.Id, db),
+                               rateTotal = res_model.rateTotal(a.Id),
                                categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
                                promotionRes = from c in db.Promotions
                                               where c.RestaurantId == a.Id
@@ -538,6 +541,7 @@ namespace API_DACN.Model
                 statusCO = item.StatusCo,
                 mainPic = db.Images.Where(t => t.RestaurantId == item.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                 pic = GetImage.getImageWithRes(item.Id, db),
+                rateTotal = res_model.rateTotal(item.Id),
                 categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == item.Id).Select(c => c.Category.Name).ToList()),
                 promotionRes = from c in db.Promotions
                                where c.RestaurantId == item.Id

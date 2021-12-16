@@ -121,4 +121,6 @@ C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\runti
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\runtimes\win-arm64\lib\net5.0\dotnet-aspnet-codegenerator-design.exe
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\API_DACN.Views.dll
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\API_DACN.Views.pdb
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\API_DACN.deps.json

@@ -109,6 +109,11 @@ namespace API_DACN.Model
                 var result = db.Rates.Where(t => t.RestaurantId == restaurantId);
 
                 float count = result.Count();
+                if(count == 0)
+                {
+                    return "0";
+                }
+
                 float sum = result.Sum(t => t.Value);
 
                 return (sum / count).ToString("0.0");

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -57,6 +58,8 @@ namespace API_DACN
                     ClockSkew = TimeSpan.Zero //mặc định token sẽ có thêm 5ph so với expires, thêm ClockSkew để bỏ đi.
                 };
             });
+
+            services.AddMvc(options => options.EnableEndpointRouting = false);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,6 +71,15 @@ namespace API_DACN
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API_DACN v1"));
             }
+
+            app.UseMvc(routes => {
+                routes.MapRoute("default",
+                                "{controller}/{action}/{id?}");
+            });
+
+            //app.Run(async (context) => {
+            //    await context.Response.WriteAsync("Failed to Find Route");
+            //});
 
             app.UseHttpsRedirection();
 

@@ -23,6 +23,7 @@ namespace API_DACN.Object.Get
         public string statusCO { get; set; }
         public List<string> pic { get; set; }
         public string categoryResStr { get; set; }
+        public string rateTotal { get; set; }
         public IEnumerable<GetPromotion_Res> promotionRes { get; set; }
         public IEnumerable<GetCategoryRes> categoryRes { get; set; }
     }
