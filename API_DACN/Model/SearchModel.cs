@@ -24,7 +24,7 @@ namespace API_DACN.Model
             try
             {
                 List<Object.Get.GetRestaurant> restaurants = new List<Object.Get.GetRestaurant>();
-                var data = db.Restaurants.Where(t => t.Status == true);
+                var data = db.Restaurants;
 
                 foreach(var item in data)
                 {
@@ -51,7 +51,7 @@ namespace API_DACN.Model
                 if(lngLat.Latitude == 0)
                 {
                     return from a in db.Restaurants
-                           where a.District == district && a.Status == true
+                           where a.District == district 
                            select new Object.Get.GetRestaurant()
                            {
                                userId = a.UserId,
@@ -115,13 +115,13 @@ namespace API_DACN.Model
 
                 // Search category name. if data is null, will search food name
                 var data = from b in db.Foods
-                            where b.Category.Name.ToUpper().Contains(name.ToUpper()) && b.Menu.Restaurant.Status == true
+                            where b.Category.Name.ToUpper().Contains(name.ToUpper())
                            select b.Menu.Restaurant;
 
                 if(data.Count() == 0)
                 {
                     data = from c in db.Foods
-                           where c.Name.ToUpper().Contains(name.ToUpper()) && c.Menu.Restaurant.Status == true
+                           where c.Name.ToUpper().Contains(name.ToUpper())
                            select c.Menu.Restaurant;
                 }
 
@@ -222,20 +222,20 @@ namespace API_DACN.Model
                 {
                     // Search category name. if data is null, will search food name
                     data = (from b in db.Foods
-                           where b.Category.KeyWord.ToUpper().Contains(name.ToUpper()) && b.Menu.Restaurant.Status == true
+                           where b.Category.KeyWord.ToUpper().Contains(name.ToUpper())
                            select b.Menu.Restaurant).ToList();
 
                     if (data.Count() == 0)
                     {
                         data = (from c in db.Foods
-                               where c.KeyWord.ToUpper().Contains(name.ToUpper()) && c.Menu.Restaurant.Status == true
+                               where c.KeyWord.ToUpper().Contains(name.ToUpper())
                                select c.Menu.Restaurant).ToList();
                     }
 
                     if(data.Count() == 0)
                     {
                         data = (from c in db.Restaurants
-                                where c.Name.ToUpper().Contains(key.ToUpper()) && c.Status == true
+                                where c.Name.ToUpper().Contains(key.ToUpper())
                                 select c).ToList();
                     }
 
@@ -251,7 +251,7 @@ namespace API_DACN.Model
                 {
                     //Search by districtList when data is null
                     data = (from a in db.Restaurants
-                           where a.Status == true && districtList.Contains(a.District) == true
+                           where districtList.Contains(a.District) == true
                            select a).ToList();
                 }
 
@@ -261,7 +261,7 @@ namespace API_DACN.Model
                     {
                         //Search by categoryResList when name is null
                         data = (from a in db.RestaurantDetails
-                               where a.Restaurant.Status == true && catelogyList.Contains(a.CategoryId) == true
+                               where catelogyList.Contains(a.CategoryId) == true
                                select a.Restaurant).ToList();
                     }
                 }
@@ -362,7 +362,7 @@ namespace API_DACN.Model
                 List<Object.Get.GetRestaurant> restaurantList = new List<Object.Get.GetRestaurant>();
 
                 var result = from a in db.RestaurantDetails
-                                where a.Restaurant.Status == true && categoryResList.Contains(a.CategoryId) == true 
+                                where categoryResList.Contains(a.CategoryId) == true 
                                 select a.Restaurant;
 
                 foreach (var item1 in result)
@@ -392,7 +392,7 @@ namespace API_DACN.Model
                 List<Object.Get.GetRestaurant> restaurantList = new List<Object.Get.GetRestaurant>();
 
                 var result = from a in db.Restaurants
-                                where a.Status == true && districtList.Contains(a.District) == true
+                                where districtList.Contains(a.District) == true
                                 select a;
 
                 foreach (var item1 in result)
@@ -422,7 +422,7 @@ namespace API_DACN.Model
                 List<Object.Get.GetRestaurant> restaurantList = new List<Object.Get.GetRestaurant>();
 
                 var result = from a in db.RestaurantDetails
-                                      where a.Restaurant.Status == true && categoryResList.Contains(a.CategoryId) == true
+                                      where categoryResList.Contains(a.CategoryId) == true
                                       select a.Restaurant;
 
                 foreach (var item1 in result)
@@ -471,6 +471,83 @@ namespace API_DACN.Model
             return from a in restaurants
                    group a by a.district into g
                    select g.FirstOrDefault().district;
+        }
+
+        //Restaurant list with ResName or Address of Res
+        public IEnumerable<Object.Get.GetRestaurant> getResWithNameOrAdd(string key, LngLat lngLat)
+        {
+            try
+            {
+                List<Restaurant> data = new List<Restaurant>();
+
+                data = (from a in db.Restaurants
+                       where a.Name.ToUpper().Contains(key.ToUpper())
+                       select a).ToList();
+
+                if(data.Count() == 0)
+                {
+                    data = (from a in db.Restaurants
+                            where (a.Line+" "+a.District+" "+a.City).ToUpper().Contains(key.ToUpper())
+                            select a).ToList();
+                }
+
+                if (lngLat.Latitude == 0)
+                {
+                    return from a in data
+                           select new Object.Get.GetRestaurant()
+                           {
+                               userId = a.UserId,
+                               restaurantId = a.Id,
+                               name = a.Name,
+                               line = a.Line,
+                               city = a.City,
+                               district = a.District,
+                               longLat = a.LongLat,
+                               openTime = a.OpenTime,
+                               closeTime = a.CloseTime,
+                               distance = "Không xác định",
+                               phoneRes = a.PhoneRestaurant,
+                               status = a.Status,
+                               statusCO = a.StatusCo,
+                               mainPic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
+                               pic = GetImage.getImageWithRes(a.Id, db),
+                               rateTotal = res_model.rateTotal(a.Id),
+                               categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
+                               promotionRes = from c in db.Promotions
+                                              where c.RestaurantId == a.Id
+                                              select new Object.Get.GetPromotion_Res()
+                                              {
+                                                  id = c.Id,
+                                                  name = c.Name,
+                                                  info = c.Info,
+                                                  value = c.Value
+                                              },
+                               categoryRes = from b in db.RestaurantDetails
+                                             where b.RestaurantId == a.Id
+                                             select new Object.Get.GetCategoryRes()
+                                             {
+                                                 id = b.CategoryId,
+                                                 name = b.Category.Name,
+                                                 icon = b.Category.Icon
+                                             }
+                           };
+                }
+
+                List<Object.Get.GetRestaurant> restaurants = new List<Object.Get.GetRestaurant>();
+
+                foreach (var item in data)
+                {
+                    double distance1 = Distance.distance(item.LongLat, lngLat);
+
+                    restaurants.Add(objectRes(item, distance1.ToString()));
+                }
+
+                return restaurants;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
 
         //Restaurant list with food

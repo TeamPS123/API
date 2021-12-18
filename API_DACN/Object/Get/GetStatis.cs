@@ -7,9 +7,7 @@ namespace API_DACN.Object.Get
 {
     public class GetStatis
     {
-        public string amountWait { get; set; }
-        public string amountDeny { get; set; }
-        public string amountConfirm { get; set; }
+        public string time { get; set; }
         public string amountComplete { get; set; }
         public string amountExpired { get; set; }
     }
@@ -18,17 +16,17 @@ namespace API_DACN.Object.Get
     {
         private int status;
         private string notification;
-        private GetStatis getStatic;
+        private List<GetStatis> getStatis;
 
-        public Message_Statis(int status, string notification, GetStatis getStatic)
+        public Message_Statis(int status, string notification, List<GetStatis> getStatis)
         {
             this.status = status;
             this.notification = notification;
-            this.getStatic = getStatic;
+            this.getStatis = getStatis;
         }
 
         public int Status { get => status; set => status = value; }
         public string Notification { get => notification; set => notification = value; }
-        public GetStatis GetStatic { get => getStatic; set => getStatic = value; }
+        public List<GetStatis> GetStatis { get => getStatis; set => getStatis = value; }
     }
 }

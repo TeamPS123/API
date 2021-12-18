@@ -137,6 +137,22 @@ namespace API_DACN.Controllers
             return Ok(new Object.Get.Message_ResList(1, "Lấy dữ liệu thành công", result, result1, result2));
         }
 
+        [HttpPost]
+        [Route("getResWithNameOrAdd")]
+        public IActionResult getResWithNameOrAdd(Object.Input.InputRes_ResNameOfAdd input)
+        {
+            var result = model.getResWithNameOrAdd(input.key, new Other.LngLat(input.lon, input.lat));
+
+            if (result == null)
+            {
+                return Ok(new Object.Get.Message_ResList(0, "Lấy dữ liệu thất bại", null, null, null));
+            }
+            var result1 = model.categoryResList(result);
+            var result2 = model.districtList(result);
+
+            return Ok(new Object.Get.Message_ResList(1, "Lấy dữ liệu thành công", result, result1, result2));
+
+        }
         //[HttpPost]
         //[Route("getResWithFood")]
         //public IActionResult getAllRestaurantWithFood(Object.Input.InputRes_Food intput)

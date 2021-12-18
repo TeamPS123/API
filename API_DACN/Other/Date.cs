@@ -20,12 +20,12 @@ namespace API_DACN.Other
                 {
                     return false;
                 }
-            }
-            if (!day.Equals("0"))
-            {
-                if (!day.Equals(time[2]))
+                if (!day.Equals("0"))
                 {
-                    return false;
+                    if (!day.Equals(time[2]))
+                    {
+                        return false;
+                    }
                 }
             }
             return true;

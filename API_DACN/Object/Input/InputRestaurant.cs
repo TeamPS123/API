@@ -77,4 +77,11 @@ namespace API_DACN.Object.Input
         public double lon { get; set; }
         public double lat { get; set; }
     }
+
+    public class InputRes_ResNameOfAdd
+    {
+        public string key { get; set;}
+        public double lon { get; set; }
+        public double lat { get; set; }
+    }
 }

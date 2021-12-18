@@ -72,11 +72,6 @@ namespace API_DACN
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API_DACN v1"));
             }
 
-            app.UseMvc(routes => {
-                routes.MapRoute("default",
-                                "{controller}/{action}/{id?}");
-            });
-
             //app.Run(async (context) => {
             //    await context.Response.WriteAsync("Failed to Find Route");
             //});
@@ -95,6 +90,12 @@ namespace API_DACN
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute("default",
+                                "{controller}/{action}/{id?}");
+            });
 
             app.UseEndpoints(endpoints =>
             {

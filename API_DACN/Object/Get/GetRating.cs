@@ -62,6 +62,7 @@ namespace API_DACN.Object.Get
         public string UserName { get; set; }
         public string imageUser { get; set; }
         public long ? countLike { get; set; }
+        public List<string> imgList { get; set; }
     }
 
     public class Message_Review

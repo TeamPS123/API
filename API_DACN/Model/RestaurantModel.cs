@@ -38,7 +38,7 @@ namespace API_DACN.Model
 
 
         //------------------------------restaurant-----------------------------------
-        public Object.Get.GetStatis getStatis(string restaurantId, string day, string month, string year)
+        public List<Object.Get.GetStatis> getStatis(string restaurantId, string month1, string year1, string month2, string year2)
         {
             try
             {
@@ -46,25 +46,96 @@ namespace API_DACN.Model
                                                                    where a.RestaurantId == restaurantId
                                                                    select a;
 
-                List<Database.ReserveTable> reserveTables1 = new List<ReserveTable>();
-                foreach(var item in reserveTables)
+                List<Object.Get.GetStatis> getStatistics = new List<Object.Get.GetStatis>();
+
+                if(year1 == year2)
                 {
-                    if(Other.Date.checkDate(item.Day, day, month, year) == true)
+                    for(int i = int.Parse(month1); i <= int.Parse(month2); i++)
                     {
-                        reserveTables1.Add(item);
+                        getStatistics.Add(getStatistic(reserveTables, i+"", year1));
+                    }
+                }
+                else
+                {
+                    for(int i = int.Parse(year1); i <= int.Parse(year2); i++)
+                    {
+                        if(i == int.Parse(year1))
+                        {
+                            for (int j = int.Parse(month1); j <= 12; j++)
+                            {
+                                getStatistics.Add(getStatistic(reserveTables, j+"", i+""));
+                            }
+                        }
+                        else if(i == int.Parse(year2))
+                        {
+
+                            for (int j = 1; j <= int.Parse(month2); j++)
+                            {
+                                getStatistics.Add(getStatistic(reserveTables, j + "", i + ""));
+                            }
+                        }
+                        else
+                        {
+                            for (int j = 1; j <= 12; j++)
+                            {
+                                getStatistics.Add(getStatistic(reserveTables, j + "", i + ""));
+                            }
+                        }
                     }
                 }
 
-                Object.Get.GetStatis statis = new Object.Get.GetStatis();
-                statis.amountWait = reserveTables1.Where(t => t.Status == 0).Count() + "";
-                statis.amountConfirm = reserveTables1.Where(t => t.Status == 1).Count() + "";
-                statis.amountDeny = reserveTables1.Where(t => t.Status == 2).Count() + "";
-                statis.amountComplete = reserveTables1.Where(t => t.Status == 4).Count() + "";
-                statis.amountExpired = reserveTables1.Where(t => t.Status == 3).Count() + "";
-
-                return statis;
+                return getStatistics;
             }
             catch(Exception e)
+            {
+                return null;
+            }
+        }
+
+        private Object.Get.GetStatis getStatistic(IEnumerable<Database.ReserveTable> reserveTables, string month, string year)
+        {
+            List<Database.ReserveTable> reserveTables1 = new List<ReserveTable>();
+            foreach (var item in reserveTables)
+            {
+                if (Other.Date.checkDate(item.Day, 0 + "", month, year) == true)
+                {
+                    reserveTables1.Add(item);
+                }
+            }
+
+            Object.Get.GetStatis getStatis = new Object.Get.GetStatis();
+            if (int.Parse(month) != 0)
+            {
+                getStatis.time = month + "/" + year;
+            }
+            else
+            {
+                getStatis.time = year;
+            }
+            getStatis.amountComplete = reserveTables1.Where(t => t.Status == 4).Count() + "";
+            getStatis.amountExpired = reserveTables1.Where(t => t.Status == 3).Count() + "";
+
+            return getStatis;
+        }
+
+        public List<Object.Get.GetStatis> getStatisWithYear(string restaurantId, string year1, string year2)
+        {
+            try
+            {
+                IEnumerable<Database.ReserveTable> reserveTables = from a in db.ReserveTables
+                                                                   where a.RestaurantId == restaurantId
+                                                                   select a;
+
+                List<Object.Get.GetStatis> getStatistics = new List<Object.Get.GetStatis>();
+
+                for (int i = int.Parse(year1); i <= int.Parse(year2); i++)
+                {
+                    getStatistics.Add(getStatistic(reserveTables, "0", i+""));
+                }
+
+                return getStatistics;
+            }
+            catch (Exception e)
             {
                 return null;
             }
@@ -146,12 +217,11 @@ namespace API_DACN.Model
             }
         }
 
-        public IEnumerable<Object.Get.GetReview> getAllReview(string restaurantId, int value, int skip, int take)
+        public IEnumerable<Object.Get.GetReview> getAllReview(int skip, int take)
         {
             try
             {
                 var result = (from a in db.Reviews
-                              where a.RestaurantId == restaurantId
                               orderby a.Date descending
                               select new Object.Get.GetReview()
                               {
@@ -164,12 +234,13 @@ namespace API_DACN.Model
                                   UserName = db.Users.Where(t => t.Id == a.UserId).Select(c => c.FullName).FirstOrDefault(),
                                   countLike = a.CountLike,
                                   imageUser = db.Images.Where(t => t.UserId == a.UserId && t.RestaurantId == "0").Select(c => c.Link).FirstOrDefault(),
+                                  imgList = db.Images.Where(t => t.ReviewId == a.Id).Select(c => c.Link).ToList(),
                               }).Skip(skip).Take(take);
 
-                if (value != -1)
-                {
-                    result = result.Where(t => t.value == value);
-                }
+                //if (value != -1)
+                //{
+                //    result = result.Where(t => t.value == value);
+                //}
 
                 return result;
             }
@@ -179,11 +250,11 @@ namespace API_DACN.Model
             }
         }
 
-        public string reviewTotal(string restaurantId)
+        public string reviewTotal()
         {
             try
             {
-                var result = db.Reviews.Where(t => t.RestaurantId == restaurantId);
+                var result = db.Reviews;
 
                 float count = result.Count();
                 float sum = result.Sum(t => t.Value);
@@ -196,11 +267,11 @@ namespace API_DACN.Model
             }
         }
 
-        public Object.Get.GetCountRating getCountReview(string restaurantId)
+        public Object.Get.GetCountRating getCountReview()
         {
             try
             {
-                var rates = db.Reviews.Where(t => t.RestaurantId == restaurantId);
+                var rates = db.Reviews;
 
                 var result = new Object.Get.GetCountRating();
                 result.count = rates.Count() + "";
@@ -366,7 +437,7 @@ namespace API_DACN.Model
             try
             {
                 var result = from a in db.Restaurants
-                             where a.Id == restaurantId && a.Status == true
+                             where a.Id == restaurantId
                              select new Object.Get.GetRestaurant()
                              {
                                  userId = a.UserId,
@@ -416,7 +487,7 @@ namespace API_DACN.Model
             try
             {
                 var result = from a in db.Promotions
-                             where a.Id == promotionId && a.Restaurant.Status == true
+                             where a.Id == promotionId
                              select new Object.Get.GetRestaurant()
                              {
                                  userId = a.Restaurant.UserId,
@@ -466,7 +537,6 @@ namespace API_DACN.Model
             try
             {
                 var result = from a in db.Restaurants
-                             where a.Status == true
                              select new Object.Get.GetRestaurant()
                              {
                                  userId = a.UserId,

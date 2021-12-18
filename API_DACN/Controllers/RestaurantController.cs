@@ -280,15 +280,15 @@ namespace API_DACN.Controllers
 
 //----------------------------------------restautant-----------------------------------
         [Route("getStaticRes")]
-        [HttpGet]
-        public IActionResult GetStaticRes(string userId, string restaurantId, string day, string month, string year)
+        [HttpPost]
+        public IActionResult GetStaticRes(Object.Input.InputStatistic input)
         {
-            if (Token.GetPhoneWithToken(Request.Headers) != userId)
+            if (Token.GetPhoneWithToken(Request.Headers) != input.userId)
             {
                 return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
             }
 
-            var add = res_model.getStatis(restaurantId, day, month, year);
+            var add = res_model.getStatis(input.restaurantId, input.month1, input.year1, input.month2, input.year2);
             if (add == null)
             {
                 return Ok(new Object.Get.Message_Statis(0, "Lấy dữ liệu thất bại", null));
@@ -296,7 +296,24 @@ namespace API_DACN.Controllers
             return Ok(new Object.Get.Message_Statis(1, "Lấy dữ liệu thành công", add));
         }
 
-//---------------------------------------reserveTable-----------------------------------
+        [Route("GetStaticResWithYear")]
+        [HttpPost]
+        public IActionResult GetStaticResWithYear(Object.Input.InputStatisticWithYear input)
+        {
+            if (Token.GetPhoneWithToken(Request.Headers) != input.userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+
+            var add = res_model.getStatisWithYear(input.restaurantId, input.year1, input.year2);
+            if (add == null)
+            {
+                return Ok(new Object.Get.Message_Statis(0, "Lấy dữ liệu thất bại", null));
+            }
+            return Ok(new Object.Get.Message_Statis(1, "Lấy dữ liệu thành công", add));
+        }
+
+        //---------------------------------------reserveTable-----------------------------------
         [Route("getFoodsByResId")]
         [HttpGet]
         public IActionResult getFoodsByResId(string userId, string reserveTableId)
