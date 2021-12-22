@@ -195,8 +195,8 @@ namespace API_DACN.Controllers
             }
 
             var rateTotal = model.reviewTotal();
-            var count = model.getCountReview();
-            return Ok(new Object.Get.Message_Review(1, "Lấy dữ liệu thành công", rateTotal, count, reviews));
+            var count =  model.getCountReview();
+            return Ok(new Object.Get.Message_Review(1, "Lấy dữ liệu thành công", "", null, reviews));
         }
 
         [HttpGet]

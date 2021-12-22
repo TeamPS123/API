@@ -215,27 +215,45 @@ namespace API_DACN.Model
             {
                 string name = Regex1.RemoveUnicode(key);
 
+                Other.FuzzySearch fuzzy = new FuzzySearch(name);
+
                 //IEnumerable<Restaurant> data = null;
                 List<Restaurant> data = new List<Restaurant>();
+
+                //var resList = db.Restaurants;
+                //var foodL = db.Foods;
 
                 if (name != "")
                 {
                     // Search category name. if data is null, will search food name
+                    //data = (from b in db.Foods
+                    //       where b.Category.KeyWord.ToUpper().Contains(name.ToUpper())
+                    //       select b.Menu.Restaurant).ToList();
+
                     data = (from b in db.Foods
-                           where b.Category.KeyWord.ToUpper().Contains(name.ToUpper())
-                           select b.Menu.Restaurant).ToList();
+                            where fuzzy.IsMatch(b.Category.KeyWord) == true
+                            select b.Menu.Restaurant).ToList();
+
 
                     if (data.Count() == 0)
                     {
+                        //data = (from c in db.Foods
+                        //       where c.KeyWord.ToUpper().Contains(name.ToUpper())
+                        //       select c.Menu.Restaurant).ToList();
+
                         data = (from c in db.Foods
-                               where c.KeyWord.ToUpper().Contains(name.ToUpper())
-                               select c.Menu.Restaurant).ToList();
+                                where fuzzy.IsMatch(c.KeyWord) == true
+                                select c.Menu.Restaurant).ToList();
                     }
 
                     if(data.Count() == 0)
                     {
+                        //data = (from c in db.Restaurants
+                        //        where c.Name.ToUpper().Contains(key.ToUpper())
+                        //        select c).ToList();
+
                         data = (from c in db.Restaurants
-                                where c.Name.ToUpper().Contains(key.ToUpper())
+                                where fuzzy.IsMatch(c.Name) == true
                                 select c).ToList();
                     }
 

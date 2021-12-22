@@ -442,8 +442,6 @@ namespace API_DACN.Database
             {
                 entity.ToTable("UserComment", "pamlelr98");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
                 entity.Property(e => e.Content).IsRequired();
 
                 entity.Property(e => e.Date)
@@ -463,26 +461,22 @@ namespace API_DACN.Database
                     .WithMany(p => p.UserComments)
                     .HasForeignKey(d => d.ReviewId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__UserComme__revie__7F2BE32F");
+                    .HasConstraintName("FK__UserComme__revie__09A971A2");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserComments)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__UserComme__userI__00200768");
+                    .HasConstraintName("FK__UserCommen__date__08B54D69");
             });
 
             modelBuilder.Entity<UserLike>(entity =>
             {
                 entity.ToTable("UserLike", "pamlelr98");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
                 entity.Property(e => e.ReviewId).HasColumnName("reviewId");
 
-                entity.Property(e => e.Status)
-                    .HasColumnName("status")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.Status).HasColumnName("status");
 
                 entity.Property(e => e.UserId)
                     .IsRequired()
@@ -494,13 +488,13 @@ namespace API_DACN.Database
                     .WithMany(p => p.UserLikes)
                     .HasForeignKey(d => d.ReviewId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__UserLike__review__7B5B524B");
+                    .HasConstraintName("FK__UserLike__review__05D8E0BE");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserLikes)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__UserLike__userId__7C4F7684");
+                    .HasConstraintName("FK__UserLike__userId__04E4BC85");
             });
 
             OnModelCreatingPartial(modelBuilder);

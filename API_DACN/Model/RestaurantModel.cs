@@ -236,6 +236,23 @@ namespace API_DACN.Model
                                   countLike = a.CountLike,
                                   imageUser = db.Images.Where(t => t.UserId == a.UserId && t.RestaurantId == "0").Select(c => c.Link).FirstOrDefault(),
                                   imgList = db.Images.Where(t => t.ReviewId == a.Id).Select(c => c.Link).ToList(),
+                                  userList = (from b in db.UserLikes
+                                              where b.ReviewId == a.Id && b.Status == true
+                                              select new Object.Get.GetLike()
+                                              {
+                                                  userId = b.UserId,
+                                                  name = b.User.FullName
+                                              }).ToList(),
+                                  comments = (from c in db.UserComments
+                                              where c.ReviewId == a.Id
+                                              orderby c.Id descending
+                                              select new Object.Get.GetComment()
+                                              {
+                                                  name = c.User.FullName,
+                                                  imgUser = db.Images.Where(t => t.UserId == c.UserId && t.RestaurantId == "0").Select(c => c.Link).FirstOrDefault(),
+                                                  content = c.Content,
+                                                  date = c.Date,
+                                              }).ToList()
                               }).Skip(skip).Take(take);
 
                 //if (value != -1)

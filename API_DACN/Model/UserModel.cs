@@ -365,8 +365,8 @@ namespace API_DACN.Model
                         orderby a.Id descending
                         select new Object.Get.GetComment()
                         {
-                            commentId = a.Id,
-                            userId = a.UserId,
+                            //commentId = a.Id,
+                            //userId = a.UserId,
                             content = a.Content,
                             date = a.Date,
                         }).Skip(skip).Take(take);
@@ -388,8 +388,8 @@ namespace API_DACN.Model
                             orderby a.Id descending
                             select a.User.FullName).Take(5).ToList();
 
-                likeReview.count = like.Count();
-                likeReview.userList = like;
+                //likeReview.count = like.Count();
+                //likeReview.userList = like;
 
                 return likeReview;
             }

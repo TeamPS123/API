@@ -28,15 +28,15 @@ namespace API_DACN.Object.Get
 
     public class GetComment
     {
-        public int commentId { get; set; }
-        public string userId { get; set; }
+        public string name { get; set; }
+        public string imgUser { get; set; }
         public string content { get; set; }
         public string date { get; set; }    
     }
 
     public class GetLike
     {
-        public int count { get; set; }
-        public List<string> userList { get; set; }
+        public string userId { get; set; }
+        public string name { get; set; }
     }
 }
