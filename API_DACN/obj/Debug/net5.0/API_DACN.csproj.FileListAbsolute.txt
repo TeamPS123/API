@@ -435,3 +435,4 @@ C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Debug\net5.0\API_DACN.RazorCore
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Debug\net5.0\Razor\Views\Share\Code.cshtml.g.cs
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Debug\net5.0\API_DACN.RazorTargetAssemblyInfo.cs
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Debug\net5.0\API_DACN.Views.pdb
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Debug\net5.0\Razor\Views\ShareReview\Code.cshtml.g.cs

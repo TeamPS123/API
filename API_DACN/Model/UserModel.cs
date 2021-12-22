@@ -52,21 +52,21 @@ namespace API_DACN.Model
                                          mainPic = db.Images.Where(t => t.RestaurantId == b.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                                          pic = GetImage.getImageWithRes(b.Id, db),
                                          categoryResStr = Other.Convert.ConvertListToString(b.RestaurantDetails.Select(c => c.Category.Name).ToList()),
-                                         promotionRes = from c in b.Promotions
+                                         promotionRes = (from c in b.Promotions
                                                         select new Object.Get.GetPromotion_Res()
                                                         {
                                                             id = c.Id,
                                                             name = c.Name,
                                                             info = c.Info,
                                                             value = c.Value
-                                                        },
-                                         categoryRes = from d in b.RestaurantDetails
+                                                        }).ToList(),
+                                         categoryRes = (from d in b.RestaurantDetails
                                                        select new Object.Get.GetCategoryRes()
                                                        {
                                                            id = d.CategoryId,
                                                            name = d.Category.Name,
                                                            icon = d.Category.Icon
-                                                       }
+                                                       }).ToList()
                                      }).FirstOrDefault()
                    };
         }
@@ -105,21 +105,21 @@ namespace API_DACN.Model
                                          mainPic = db.Images.Where(t => t.RestaurantId == b.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                                          pic = GetImage.getImageWithRes(b.Id, db),
                                          categoryResStr = Other.Convert.ConvertListToString(b.RestaurantDetails.Select(c => c.Category.Name).ToList()),
-                                         promotionRes = from c in b.Promotions
+                                         promotionRes = (from c in b.Promotions
                                                         select new Object.Get.GetPromotion_Res()
                                                         {
                                                             id = c.Id,
                                                             name = c.Name,
                                                             info = c.Info,
                                                             value = c.Value
-                                                        },
-                                         categoryRes = from d in b.RestaurantDetails
+                                                        }).ToList(),
+                                         categoryRes = (from d in b.RestaurantDetails
                                                        select new Object.Get.GetCategoryRes()
                                                        {
                                                            id = d.CategoryId,
                                                            name = d.Category.Name,
                                                            icon = d.Category.Icon
-                                                       }
+                                                       }).ToList()
                                      }).FirstOrDefault()
                    }).FirstOrDefault();
         }
@@ -307,14 +307,24 @@ namespace API_DACN.Model
             }
         }
 
-        public bool likeReview(int reviewId)
+        public bool likeAndDisReview(string userId, int reviewId)
         {
             try
             {
-                var result = db.Reviews.Find(reviewId);
-                long? count = result.CountLike;
-                count++;
-                result.CountLike = count;
+                var result = db.UserLikes.Where(t => t.UserId == userId && t.ReviewId == reviewId).FirstOrDefault();
+                if(result != null)
+                {
+                    result.Status = !result.Status;
+                    db.SaveChanges();
+
+                    return true;
+                }
+                var likeAndDis = new Database.UserLike();
+                likeAndDis.UserId = userId;
+                likeAndDis.ReviewId = reviewId;
+                likeAndDis.Status = true;
+
+                db.UserLikes.Add(likeAndDis);
                 db.SaveChanges();
             }
             catch(Exception e)
@@ -322,6 +332,71 @@ namespace API_DACN.Model
                 return false;
             }
             return true;
+        }
+
+        public string addComment(string userId, int reviewId, string content, string date)
+        {
+            try
+            {
+                var comment = new Database.UserComment();
+                comment.UserId = userId;
+                comment.ReviewId = reviewId;
+                comment.Content = content;
+                comment.Date = date;
+                db.UserComments.Add(comment);
+                db.SaveChanges();
+
+                string id = db.UserComments.OrderByDescending(c => c.Id).Select(t => t.Id).FirstOrDefault() + "";
+
+                return id + "";
+            }
+            catch(Exception e)
+            {
+                return "null";
+            }
+        }
+    
+        public IEnumerable<Object.Get.GetComment> comments(int reviewId, int skip, int take)
+        {
+            try
+            {
+                return (from a in db.UserComments
+                        where a.ReviewId == reviewId
+                        orderby a.Id descending
+                        select new Object.Get.GetComment()
+                        {
+                            commentId = a.Id,
+                            userId = a.UserId,
+                            content = a.Content,
+                            date = a.Date,
+                        }).Skip(skip).Take(take);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public Object.Get.GetLike getLike(int reviewId)
+        {
+            try
+            {
+                Object.Get.GetLike likeReview = new Object.Get.GetLike();
+
+                var like = (from a in db.UserLikes
+                            where a.ReviewId == reviewId && a.Status == true
+                            orderby a.Id descending
+                            select a.User.FullName).Take(5).ToList();
+
+                likeReview.count = like.Count();
+                likeReview.userList = like;
+
+                return likeReview;
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

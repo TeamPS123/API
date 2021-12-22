@@ -15,10 +15,12 @@ namespace API_DACN.Controllers
     {
         private RestaurantModel model;
         private SearchModel modelSearch;
+        private UserModel userModel;
 
         public MainController(food_location_dbContext db)
         {
             model = new RestaurantModel(db);
+            userModel = new UserModel(db);
         }
 
         [HttpGet]
@@ -196,5 +198,20 @@ namespace API_DACN.Controllers
             var count = model.getCountReview();
             return Ok(new Object.Get.Message_Review(1, "Lấy dữ liệu thành công", rateTotal, count, reviews));
         }
+
+        [HttpGet]
+        [Route("getLikeAndComment")]
+        public IActionResult getLikeAndComment(int reviewId, int skip, int take)
+        {
+            var comments = userModel.comments(reviewId, skip, take);
+            var like = userModel.getLike(reviewId);
+
+            if (comments == null && like == null)
+            {
+                return Ok(new Object.Get.GetLikeAndComment(0, "Lấy dữ liệu thất bại", null, null));
+            }
+            return Ok(new Object.Get.GetLikeAndComment(1, "Lấy dữ liệu thành công", like, comments));
+        }
+
     }
 }

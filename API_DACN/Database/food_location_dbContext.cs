@@ -28,8 +28,9 @@ namespace API_DACN.Database
         public virtual DbSet<RestaurantDetail> RestaurantDetails { get; set; }
         public virtual DbSet<Review> Reviews { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UserComment> UserComments { get; set; }
+        public virtual DbSet<UserLike> UserLikes { get; set; }
         public DbSet<NextIdViewModel> NextIdViewModel { get; set; }
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -435,6 +436,71 @@ namespace API_DACN.Database
                     .IsRequired()
                     .HasMaxLength(20)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<UserComment>(entity =>
+            {
+                entity.ToTable("UserComment", "pamlelr98");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Content).IsRequired();
+
+                entity.Property(e => e.Date)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .HasColumnName("date");
+
+                entity.Property(e => e.ReviewId).HasColumnName("reviewId");
+
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasMaxLength(7)
+                    .IsUnicode(false)
+                    .HasColumnName("userId");
+
+                entity.HasOne(d => d.Review)
+                    .WithMany(p => p.UserComments)
+                    .HasForeignKey(d => d.ReviewId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__UserComme__revie__7F2BE32F");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserComments)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__UserComme__userI__00200768");
+            });
+
+            modelBuilder.Entity<UserLike>(entity =>
+            {
+                entity.ToTable("UserLike", "pamlelr98");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.ReviewId).HasColumnName("reviewId");
+
+                entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasMaxLength(7)
+                    .IsUnicode(false)
+                    .HasColumnName("userId");
+
+                entity.HasOne(d => d.Review)
+                    .WithMany(p => p.UserLikes)
+                    .HasForeignKey(d => d.ReviewId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__UserLike__review__7B5B524B");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserLikes)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__UserLike__userId__7C4F7684");
             });
 
             OnModelCreatingPartial(modelBuilder);

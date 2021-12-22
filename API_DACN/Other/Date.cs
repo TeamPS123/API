@@ -16,6 +16,10 @@ namespace API_DACN.Other
             }
             if (!month.Equals("0"))
             {
+                if(int.Parse(month) < 10)
+                {
+                    month = "0" + month;
+                }
                 if (!month.Equals(time[1]))
                 {
                     return false;

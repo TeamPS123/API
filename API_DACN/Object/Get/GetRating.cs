@@ -58,6 +58,7 @@ namespace API_DACN.Object.Get
         public int value { get; set; }
         public string UserId { get; set; }
         public string RestaurantId { get; set; }
+        public string imageRes { get; set; }
         public string date { get; set; }
         public string UserName { get; set; }
         public string imageUser { get; set; }

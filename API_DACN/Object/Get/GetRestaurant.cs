@@ -24,8 +24,8 @@ namespace API_DACN.Object.Get
         public List<string> pic { get; set; }
         public string categoryResStr { get; set; }
         public string rateTotal { get; set; }
-        public IEnumerable<GetPromotion_Res> promotionRes { get; set; }
-        public IEnumerable<GetCategoryRes> categoryRes { get; set; }
+        public List<GetPromotion_Res> promotionRes { get; set; }
+        public List<GetCategoryRes> categoryRes { get; set; }
     }
 
     public class Message_Res

@@ -222,7 +222,7 @@ namespace API_DACN.Model
             try
             {
                 var result = (from a in db.Reviews
-                              orderby a.Date descending
+                              orderby a.Id descending
                               select new Object.Get.GetReview()
                               {
                                   Id = a.Id,
@@ -230,6 +230,7 @@ namespace API_DACN.Model
                                   value = a.Value,
                                   UserId = a.UserId,
                                   RestaurantId = a.RestaurantId,
+                                  imageRes = db.Images.Where(t => t.FoodId == "0" && t.RestaurantId == a.RestaurantId).Select(c => c.Link).FirstOrDefault(),
                                   date = a.Date,
                                   UserName = db.Users.Where(t => t.Id == a.UserId).Select(c => c.FullName).FirstOrDefault(),
                                   countLike = a.CountLike,
@@ -455,7 +456,7 @@ namespace API_DACN.Model
                                  mainPic = db.Images.Where(t => t.RestaurantId == restaurantId && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                                  pic = GetImage.getImageWithRes(restaurantId, db),
                                  categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()), 
-                                 promotionRes = from c in db.Promotions
+                                 promotionRes = (from c in db.Promotions
                                                 where c.RestaurantId == a.Id
                                                 select new Object.Get.GetPromotion_Res()
                                                 {
@@ -463,20 +464,20 @@ namespace API_DACN.Model
                                                     name = c.Name,
                                                     info = c.Info,
                                                     value = c.Value
-                                                },
-                                 categoryRes = from b in db.RestaurantDetails
+                                                }).ToList(),
+                                 categoryRes = (from b in db.RestaurantDetails
                                                where b.RestaurantId == a.Id
                                                select new Object.Get.GetCategoryRes()
                                                {
                                                    id = b.CategoryId,
                                                    name = b.Category.Name,
                                                    icon = b.Category.Icon
-                                               }
+                                               }).ToList()
                              };
 
                 return result.FirstOrDefault();
             }
-            catch
+            catch(Exception e)
             {
                 return null;
             }
@@ -505,7 +506,7 @@ namespace API_DACN.Model
                                  mainPic = db.Images.Where(t => t.RestaurantId == a.RestaurantId && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                                  pic = GetImage.getImageWithRes(a.RestaurantId, db),
                                  categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.RestaurantId).Select(c => c.Category.Name).ToList()),
-                                 promotionRes = from c in db.Promotions
+                                 promotionRes = (from c in db.Promotions
                                                 where c.RestaurantId == a.RestaurantId
                                                 select new Object.Get.GetPromotion_Res()
                                                 {
@@ -513,15 +514,15 @@ namespace API_DACN.Model
                                                     name = c.Name,
                                                     info = c.Info,
                                                     value = c.Value
-                                                },
-                                 categoryRes = from b in db.RestaurantDetails
+                                                }).ToList(),
+                                 categoryRes = (from b in db.RestaurantDetails
                                                where b.RestaurantId == a.RestaurantId
                                                select new Object.Get.GetCategoryRes()
                                                {
                                                    id = b.CategoryId,
                                                    name = b.Category.Name,
                                                    icon = b.Category.Icon
-                                               }
+                                               }).ToList()
                              };
 
                 return result.FirstOrDefault();
@@ -554,7 +555,7 @@ namespace API_DACN.Model
                                  mainPic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                                  pic = GetImage.getImageWithRes(a.Id, db),
                                  categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
-                                 promotionRes = from c in db.Promotions
+                                 promotionRes = (from c in db.Promotions
                                                 where c.RestaurantId == a.Id
                                                 select new Object.Get.GetPromotion_Res()
                                                 {
@@ -562,15 +563,15 @@ namespace API_DACN.Model
                                                     name = c.Name,
                                                     info = c.Info,
                                                     value = c.Value
-                                                },
-                                 categoryRes = from b in db.RestaurantDetails
+                                                }).ToList(),
+                                 categoryRes = (from b in db.RestaurantDetails
                                                where b.RestaurantId == a.Id
                                                select new Object.Get.GetCategoryRes()
                                                {
                                                    id = b.CategoryId,
                                                    name = b.Category.Name,
                                                    icon = b.Category.Icon
-                                               }
+                                               }).ToList()
                              };
 
                 return result;

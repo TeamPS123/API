@@ -203,20 +203,38 @@ namespace API_DACN.Controllers
 
         [HttpGet]
         [Route("likeReview")]
-        public IActionResult likeReview(string userId, int reviewId)
+        public IActionResult likeAndDisReview(string userId, int reviewId)
         {
             if (token.GetPhoneWithToken(Request.Headers) != userId)
             {
                 return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
             }
 
-            var result = userModel.likeReview(reviewId);
+            var result = userModel.likeAndDisReview(userId, reviewId);
 
             if (!result)
             {
-                return Ok(new Object.Message(0, "thích đánh giá thất bại", null));
+                return Ok(new Object.Message(0, "cập nhật đánh giá thất bại", null));
             }
-            return Ok(new Object.Message(1, "thích đánh giá thành công", null));
+            return Ok(new Object.Message(1, "cập nhật đánh giá thành công", null));
+        }
+
+        [HttpGet]
+        [Route("addComment")]
+        public IActionResult addComment(string userId, int reviewId, string content, string date)
+        {
+            if (token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+
+            var result = userModel.addComment(userId, reviewId, content, date);
+
+            if (result == "null")
+            {
+                return Ok(new Object.Message(0, "bình luận thất bại", null));
+            }
+            return Ok(new Object.Message(1, "bình luận thành công", result));
         }
     }
 }

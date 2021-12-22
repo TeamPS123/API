@@ -12,6 +12,8 @@ namespace API_DACN.Database
             Rates = new HashSet<Rate>();
             ReserveTables = new HashSet<ReserveTable>();
             Restaurants = new HashSet<Restaurant>();
+            UserComments = new HashSet<UserComment>();
+            UserLikes = new HashSet<UserLike>();
         }
 
         public string Id { get; set; }
@@ -24,5 +26,7 @@ namespace API_DACN.Database
         public virtual ICollection<Rate> Rates { get; set; }
         public virtual ICollection<ReserveTable> ReserveTables { get; set; }
         public virtual ICollection<Restaurant> Restaurants { get; set; }
+        public virtual ICollection<UserComment> UserComments { get; set; }
+        public virtual ICollection<UserLike> UserLikes { get; set; }
     }
 }
