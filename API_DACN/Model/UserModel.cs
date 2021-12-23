@@ -365,8 +365,8 @@ namespace API_DACN.Model
                         orderby a.Id descending
                         select new Object.Get.GetComment()
                         {
-                            //commentId = a.Id,
-                            //userId = a.UserId,
+                            name = a.User.FullName,
+                            imgUser = db.Images.Where(t => t.UserId == a.UserId && t.RestaurantId == "0").Select(c => c.Link).FirstOrDefault(),
                             content = a.Content,
                             date = a.Date,
                         }).Skip(skip).Take(take);
@@ -377,21 +377,20 @@ namespace API_DACN.Model
             }
         }
 
-        public Object.Get.GetLike getLike(int reviewId)
+        public IEnumerable<Object.Get.GetLike> getLike(int reviewId)
         {
             try
             {
                 Object.Get.GetLike likeReview = new Object.Get.GetLike();
 
-                var like = (from a in db.UserLikes
+                return (from a in db.UserLikes
                             where a.ReviewId == reviewId && a.Status == true
                             orderby a.Id descending
-                            select a.User.FullName).Take(5).ToList();
-
-                //likeReview.count = like.Count();
-                //likeReview.userList = like;
-
-                return likeReview;
+                            select new Object.Get.GetLike()
+                            {
+                                userId = a.UserId,
+                                name = a.User.FullName
+                            }).Take(5).ToList();
             }
             catch
             {

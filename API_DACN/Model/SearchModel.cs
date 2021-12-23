@@ -215,13 +215,13 @@ namespace API_DACN.Model
             {
                 string name = Regex1.RemoveUnicode(key);
 
-                Other.FuzzySearch fuzzy = new FuzzySearch(name);
+                FuzzySearch fuzzy = new FuzzySearch(db);
 
                 //IEnumerable<Restaurant> data = null;
                 List<Restaurant> data = new List<Restaurant>();
 
-                //var resList = db.Restaurants;
-                //var foodL = db.Foods;
+                var resList = db.Restaurants.ToList();
+                var foodList = db.Foods.ToList();
 
                 if (name != "")
                 {
@@ -230,9 +230,7 @@ namespace API_DACN.Model
                     //       where b.Category.KeyWord.ToUpper().Contains(name.ToUpper())
                     //       select b.Menu.Restaurant).ToList();
 
-                    data = (from b in db.Foods
-                            where fuzzy.IsMatch(b.Category.KeyWord) == true
-                            select b.Menu.Restaurant).ToList();
+                    data = fuzzy.SearchFood(name, foodList, 0.20);
 
 
                     if (data.Count() == 0)
@@ -241,9 +239,7 @@ namespace API_DACN.Model
                         //       where c.KeyWord.ToUpper().Contains(name.ToUpper())
                         //       select c.Menu.Restaurant).ToList();
 
-                        data = (from c in db.Foods
-                                where fuzzy.IsMatch(c.KeyWord) == true
-                                select c.Menu.Restaurant).ToList();
+                       
                     }
 
                     if(data.Count() == 0)
@@ -252,9 +248,7 @@ namespace API_DACN.Model
                         //        where c.Name.ToUpper().Contains(key.ToUpper())
                         //        select c).ToList();
 
-                        data = (from c in db.Restaurants
-                                where fuzzy.IsMatch(c.Name) == true
-                                select c).ToList();
+                        data = fuzzy.SearchRes(key.ToUpper(), resList, 0.15);
                     }
 
                     if (districtList.Count() > 0 && data.Count() > 0)
@@ -566,6 +560,77 @@ namespace API_DACN.Model
             {
                 return null;
             }
+        }
+
+        //Restaurant list with suggest
+        public string getResSuggest(string userId, LngLat lngLat, int dis)
+        {
+            try
+            {
+                int rangeDay = 10; //static reserveTable in 10 day
+                int countRequest = 5; // amount reserveTable request in rangeDay
+                List<Object.Get.GetRestaurant> result = new List<Object.Get.GetRestaurant>();
+
+                //Search restaurant in the range
+                List<Database.Restaurant> restaurants = new List<Database.Restaurant>();
+                var data = db.Restaurants;
+
+                foreach (var item in data)
+                {
+                    double distance1 = Distance.distance(item.LongLat, lngLat);
+                    if (distance1 <= dis)
+                    {
+                        restaurants.Add(item);
+                    }
+                }
+
+                //Fitter restaurant user ofter eats
+                foreach (var item in data)
+                {
+                    int count = 0;
+
+                    var reserveTable = db.ReserveTables.Where(t => t.UserId == userId && t.RestaurantId == item.Id);
+                    foreach(var item1 in reserveTable)
+                    {
+                        if(checkDate(item1.Day, rangeDay))
+                        {
+                            count++;
+                        }
+                    }
+
+                    if (count > countRequest)
+                    {
+
+                    }
+                }
+
+                return "hihi";
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
+        }
+
+        public bool checkDate(string date, int range)
+        {
+            int day = DateTime.Now.Day;
+            int month = DateTime.Now.Month;
+            int year = DateTime.Now.Year;
+
+            string[] time = date.Split("-");
+
+            DateTime dateNow = System.Convert.ToDateTime(day+"/"+month+"/"+year);
+            DateTime dateReservaTable = System. Convert.ToDateTime(time[2]+"/"+time[1]+"/"+time[0]);
+
+            TimeSpan Time = dateNow - dateReservaTable;
+            int TongSoNgay = Time.Days;
+
+            if(TongSoNgay > range)
+            {
+                return true;
+            }
+            return false;
         }
 
         //Restaurant list with food

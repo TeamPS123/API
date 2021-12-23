@@ -153,6 +153,13 @@ namespace API_DACN.Controllers
             return Ok(new Object.Get.Message_ResList(1, "Lấy dữ liệu thành công", result, result1, result2));
 
         }
+
+        //[HttpGet]
+        //[Route("getRes_Suggest")]
+        //public IActionResult getRes_Suggest()
+        //{
+        //    return Ok(new Object.Message(0, model.getResSuggest("UI00011"), ""));
+        //}
         //[HttpPost]
         //[Route("getResWithFood")]
         //public IActionResult getAllRestaurantWithFood(Object.Input.InputRes_Food intput)
