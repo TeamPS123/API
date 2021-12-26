@@ -24,6 +24,8 @@ namespace API_DACN.Object.Get
         public List<string> pic { get; set; }
         public string categoryResStr { get; set; }
         public string rateTotal { get; set; }
+        public int countType { get; set; }
+        public int type { get; set; } // 1: loại thường dùng || 2: loại hot || 3: loại thường
         public List<GetPromotion_Res> promotionRes { get; set; }
         public List<GetCategoryRes> categoryRes { get; set; }
     }
@@ -113,8 +115,8 @@ namespace API_DACN.Object.Get
     {
         public int amountDay { get; set; }
         public int amountWeek { get; set; }
-
         public bool status { get; set; }
+        public string statusCo { get; set; }
     }
 
     public class MessageResDetail

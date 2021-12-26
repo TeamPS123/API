@@ -213,5 +213,19 @@ namespace API_DACN.Controllers
             return Ok(new Object.Get.GetLikeAndComment(1, "Lấy dữ liệu thành công", like, comments));
         }
 
+        [HttpGet]
+        [Route("getStatisticResWithUser")]
+        public IActionResult getStatisticResWithUser(string restaurantId)
+        {
+            string now = Other.Convert.ConvertDateTimeToString(DateTime.Now);
+            var result = model.getStatisticResWithUser(restaurantId, now);
+            if (result == "null")
+            {
+                return Ok(new Object.Message(0, "Lấy dữ liệu thất bại", null));
+            }
+
+            return Ok(new Object.Message(1, "Lấy dữ liệu thành công", result));
+        }
+
     }
 }

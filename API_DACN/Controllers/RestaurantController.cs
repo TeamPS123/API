@@ -105,6 +105,22 @@ namespace API_DACN.Controllers
             return Ok(new Object.Message(1, "Thay đổi trạng thái thành công", null));
         }
 
+        [Route("changeStatusCo")]
+        [HttpGet]
+        public IActionResult changeStatusCo(string userId, string restaurantId, string statusCo)
+        {
+            if (Token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+            var result = res_model.changeStatusCo(restaurantId, statusCo);
+            if (!result)
+            {
+                return Ok(new Object.Message(0, "Thay đổi trạng thái thất bại", null));
+            }
+            return Ok(new Object.Message(1, "Thay đổi trạng thái thành công", null));
+        }
+
         [Route("getAllReserveTableByRestaurantId")]
         [HttpGet]
         public IActionResult getAllReserverTableByRestaurantId(string userId, string restaurantId, int code)
@@ -278,6 +294,24 @@ namespace API_DACN.Controllers
             return Ok(new Object.Message(1, "Thêm loại thức ăn thành công", add));
         }
 
+//----------------------------------------search-----------------------------------
+        [Route("searchReserve")]
+        [HttpPost]
+        public IActionResult searchReserve(Object.Input.inputSearchReverse input)
+        {
+            if (Token.GetPhoneWithToken(Request.Headers) != input.userId)
+            {
+                return Ok(new Object.Get.Message_ReserveTable1(2, "Kiểm tra lại token tý nào", null));
+            }
+
+            var add = res_model.getReserveTableWithKey(input.restaurantId, input.key);
+            if (add.Equals("null"))
+            {
+                return Ok(new Object.Get.Message_ReserveTable1(0, "Lấy dữ liệu thất bại", null));
+            }
+            return Ok(new Object.Get.Message_ReserveTable1(1, "lấy dữ liệu thành công", add));
+        }
+
 //----------------------------------------restautant-----------------------------------
         [Route("getStaticRes")]
         [HttpPost]
@@ -313,7 +347,24 @@ namespace API_DACN.Controllers
             return Ok(new Object.Get.Message_Statis(1, "Lấy dữ liệu thành công", add));
         }
 
-        //---------------------------------------reserveTable-----------------------------------
+        [Route("GetStaisticWithDate")]
+        [HttpPost]
+        public IActionResult GetStaisticWithDate(Object.Input.InputStatisticWithDate input)
+        {
+            if (Token.GetPhoneWithToken(Request.Headers) != input.userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+
+            var add = res_model.getStatisWithDate(input.restaurantId, input.date1, input.date2);
+            if (add == null)
+            {
+                return Ok(new Object.Get.Message_Statis(0, "Lấy dữ liệu thất bại", null));
+            }
+            return Ok(new Object.Get.Message_Statis(1, "Lấy dữ liệu thành công", add));
+        }
+
+//---------------------------------------reserveTable-----------------------------------
         [Route("getFoodsByResId")]
         [HttpGet]
         public IActionResult getFoodsByResId(string userId, string reserveTableId)

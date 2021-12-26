@@ -22,4 +22,12 @@ namespace API_DACN.Object.Input
         public string year1 { get; set; }
         public string year2 { get; set; }
     }
+
+    public class InputStatisticWithDate
+    {
+        public string userId { get; set; }
+        public string restaurantId { get; set; }
+        public string date1 { get; set; }
+        public string date2 { get; set; }
+    }
 }

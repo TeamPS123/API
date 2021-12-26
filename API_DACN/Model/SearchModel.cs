@@ -71,8 +71,8 @@ namespace API_DACN.Model
                                pic = GetImage.getImageWithRes(a.Id, db),
                                categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
                                promotionRes = (from c in db.Promotions
-                                              where c.RestaurantId == a.Id
-                                              select new Object.Get.GetPromotion_Res()
+                                              where c.RestaurantId == a.Id && c.Status == true
+                                               select new Object.Get.GetPromotion_Res()
                                               {
                                                   id = c.Id,
                                                   name = c.Name,
@@ -171,7 +171,7 @@ namespace API_DACN.Model
                                pic = GetImage.getImageWithRes(a.Id, db),
                                categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
                                promotionRes = (from c in db.Promotions
-                                               where c.RestaurantId == a.Id
+                                               where c.RestaurantId == a.Id && c.Status == true
                                                select new Object.Get.GetPromotion_Res()
                                                {
                                                    id = c.Id,
@@ -328,8 +328,8 @@ namespace API_DACN.Model
                                rateTotal = res_model.rateTotal(a.Id),
                                categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
                                promotionRes = (from c in db.Promotions
-                                              where c.RestaurantId == a.Id
-                                              select new Object.Get.GetPromotion_Res()
+                                              where c.RestaurantId == a.Id && c.Status == true
+                                               select new Object.Get.GetPromotion_Res()
                                               {
                                                   id = c.Id,
                                                   name = c.Name,
@@ -526,8 +526,8 @@ namespace API_DACN.Model
                                rateTotal = res_model.rateTotal(a.Id),
                                categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
                                promotionRes = (from c in db.Promotions
-                                              where c.RestaurantId == a.Id
-                                              select new Object.Get.GetPromotion_Res()
+                                              where c.RestaurantId == a.Id && c.Status == true
+                                               select new Object.Get.GetPromotion_Res()
                                               {
                                                   id = c.Id,
                                                   name = c.Name,
@@ -563,33 +563,44 @@ namespace API_DACN.Model
         }
 
         //Restaurant list with suggest
-        public string getResSuggest(string userId, LngLat lngLat, int dis)
+        public IEnumerable<Object.Get.GetRestaurant> getResSuggest(string userId, LngLat lngLat, int dis, int rangeDay)
         {
+            List<Object.Get.GetRestaurant> restaurants = new List<Object.Get.GetRestaurant>();
+
             try
             {
-                int rangeDay = 10; //static reserveTable in 10 day
-                int countRequest = 5; // amount reserveTable request in rangeDay
-                List<Object.Get.GetRestaurant> result = new List<Object.Get.GetRestaurant>();
+                //int rangeDay = 10; //static reserveTable in 10 day
+                //int countRequest = 5; // amount reserveTable request in rangeDay with user
+                //int countRequest_Res = 10; // amount reserTable request in rangeDat with restaurant
 
                 //Search restaurant in the range
-                List<Database.Restaurant> restaurants = new List<Database.Restaurant>();
                 var data = db.Restaurants;
 
-                foreach (var item in data)
+                if (lngLat.Longitude == 0)
                 {
-                    double distance1 = Distance.distance(item.LongLat, lngLat);
-                    if (distance1 <= dis)
+                    foreach (var item in data)
                     {
-                        restaurants.Add(item);
+                        restaurants.Add(objectRes(item, "Không xác định"));
+                    }
+                }
+                else
+                {
+                    foreach (var item in data)
+                    {
+                        double distance1 = Distance.distance(item.LongLat, lngLat);
+                        if (distance1 <= dis)
+                        {
+                            restaurants.Add(objectRes(item, distance1.ToString()));
+                        }
                     }
                 }
 
                 //Fitter restaurant user ofter eats
-                foreach (var item in data)
+                foreach (var item in restaurants)
                 {
                     int count = 0;
 
-                    var reserveTable = db.ReserveTables.Where(t => t.UserId == userId && t.RestaurantId == item.Id);
+                    var reserveTable = db.ReserveTables.Where(t => t.UserId == userId && t.RestaurantId == item.restaurantId);
                     foreach(var item1 in reserveTable)
                     {
                         if(checkDate(item1.Day, rangeDay))
@@ -598,13 +609,47 @@ namespace API_DACN.Model
                         }
                     }
 
-                    if (count > countRequest)
-                    {
+                    //if (count > countRequest)
+                    //{
+                        item.countType = count;
+                        item.type = 1;
+                    //}
+                }
 
+                //Fitter restaurnt hot in rangeDay
+                foreach(var item in restaurants)
+                {
+                    if(item.type != 1)
+                    {
+                        int count = 0;
+
+                        var reserveTable = db.ReserveTables.Where(t => t.RestaurantId == item.restaurantId);
+                        foreach (var item1 in reserveTable)
+                        {
+                            if (checkDate_Res(item1.Day, 30))
+                            {
+                                count++;
+                            }
+                        }
+
+                        //if (count > countRequest_Res)
+                        //{
+                            item.countType = count;
+                            item.type = 2;
+                        //}
                     }
                 }
 
-                return "hihi";
+                //oder by
+                restaurants = (from a in restaurants
+                              orderby a.countType descending
+                              select a).ToList();
+
+                restaurants = (from a in restaurants
+                               orderby a.type ascending
+                               select a).ToList();
+
+                return restaurants;
             }
             catch(Exception e)
             {
@@ -612,7 +657,7 @@ namespace API_DACN.Model
             }
         }
 
-        public bool checkDate(string date, int range)
+        private bool checkDate(string date, int range)
         {
             int day = DateTime.Now.Day;
             int month = DateTime.Now.Month;
@@ -620,13 +665,34 @@ namespace API_DACN.Model
 
             string[] time = date.Split("-");
 
-            DateTime dateNow = System.Convert.ToDateTime(day+"/"+month+"/"+year);
-            DateTime dateReservaTable = System. Convert.ToDateTime(time[2]+"/"+time[1]+"/"+time[0]);
+            DateTime dateNow = DateTime.ParseExact(day + "/" + month + "/" + year, "dd/MM/yyyy", null);
+            DateTime dateReservaTable = DateTime.ParseExact(time[2] + "/" + time[1] + "/" + time[0], "dd/MM/yyyy", null); 
 
             TimeSpan Time = dateNow - dateReservaTable;
             int TongSoNgay = Time.Days;
 
             if(TongSoNgay > range)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private bool checkDate_Res(string date, int range)
+        {
+            int day = DateTime.Now.Day;
+            int month = DateTime.Now.Month;
+            int year = DateTime.Now.Year;
+
+            string[] time = date.Split("-");
+
+            DateTime dateNow = DateTime.ParseExact(day + "/" + month + "/" + year, "dd/MM/yyyy", null);
+            DateTime dateReservaTable = DateTime.ParseExact(time[2] + "/" + time[1] + "/" + time[0], "dd/MM/yyyy", null);
+
+            TimeSpan Time = dateNow - dateReservaTable;
+            int TongSoNgay = Time.Days;
+
+            if (TongSoNgay < range)
             {
                 return true;
             }
@@ -702,10 +768,12 @@ namespace API_DACN.Model
                 mainPic = db.Images.Where(t => t.RestaurantId == item.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                 pic = GetImage.getImageWithRes(item.Id, db),
                 rateTotal = res_model.rateTotal(item.Id),
+                countType = 0,
+                type = 3,
                 categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == item.Id).Select(c => c.Category.Name).ToList()),
                 promotionRes = (from c in db.Promotions
-                               where c.RestaurantId == item.Id
-                               select new Object.Get.GetPromotion_Res()
+                               where c.RestaurantId == item.Id && c.Status == true
+                                select new Object.Get.GetPromotion_Res()
                                {
                                    id = c.Id,
                                    name = c.Name,

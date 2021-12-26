@@ -53,7 +53,8 @@ namespace API_DACN.Model
                                          pic = GetImage.getImageWithRes(b.Id, db),
                                          categoryResStr = Other.Convert.ConvertListToString(b.RestaurantDetails.Select(c => c.Category.Name).ToList()),
                                          promotionRes = (from c in b.Promotions
-                                                        select new Object.Get.GetPromotion_Res()
+                                                         where c.Status == true
+                                                         select new Object.Get.GetPromotion_Res()
                                                         {
                                                             id = c.Id,
                                                             name = c.Name,
@@ -106,7 +107,8 @@ namespace API_DACN.Model
                                          pic = GetImage.getImageWithRes(b.Id, db),
                                          categoryResStr = Other.Convert.ConvertListToString(b.RestaurantDetails.Select(c => c.Category.Name).ToList()),
                                          promotionRes = (from c in b.Promotions
-                                                        select new Object.Get.GetPromotion_Res()
+                                                         where c.Status == true
+                                                         select new Object.Get.GetPromotion_Res()
                                                         {
                                                             id = c.Id,
                                                             name = c.Name,

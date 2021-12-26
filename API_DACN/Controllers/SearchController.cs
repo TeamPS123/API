@@ -154,12 +154,27 @@ namespace API_DACN.Controllers
 
         }
 
-        //[HttpGet]
-        //[Route("getRes_Suggest")]
-        //public IActionResult getRes_Suggest()
-        //{
-        //    return Ok(new Object.Message(0, model.getResSuggest("UI00011"), ""));
-        //}
+        [HttpPost]
+        [Route("getRes_Suggest")]
+        public IActionResult getRes_Suggest(Object.Input.InputSuggest input)
+        {
+            if (input.distance > 20 || input.distance < 5)
+            {
+                return Ok(new Object.Get.Message_ResList(2, "Phạm vi tìm kiếm từ 5km đến 20km", null, null, null));
+            }
+
+            var result = model.getResSuggest(input.userId, new Other.LngLat(input.lon, input.lat), input.distance, input.rangeDay);
+
+            if (result == null)
+            {
+                return Ok(new Object.Get.Message_ResList(0, "Lấy dữ liệu thất bại", null, null, null));
+            }
+            var result1 = model.categoryResList(result);
+            var result2 = model.districtList(result);
+
+            return Ok(new Object.Get.Message_ResList(1, "Lấy dữ liệu thành công", result, result1, result2));
+        }
+
         //[HttpPost]
         //[Route("getResWithFood")]
         //public IActionResult getAllRestaurantWithFood(Object.Input.InputRes_Food intput)

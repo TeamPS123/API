@@ -47,6 +47,7 @@ namespace API_DACN.Object.Get
         public string promotionId { get; set; }
         public string note { get; set; }
         public string userId { get; set; }
+        public int status { get; set; }
     }
 
     public class Message_ReserveTable1

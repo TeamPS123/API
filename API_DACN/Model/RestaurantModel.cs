@@ -36,8 +36,61 @@ namespace API_DACN.Model
             }
         }
 
-
         //------------------------------restaurant-----------------------------------
+        public List<Object.Get.GetStatis> getStatisWithDate(string restaurantId, string date1, string date2)
+        {
+            try
+            {
+                IEnumerable<Database.ReserveTable> reserveTables = from a in db.ReserveTables
+                                                                   where a.RestaurantId == restaurantId
+                                                                   select a;
+
+                List<Object.Get.GetStatis> getStatistics = new List<Object.Get.GetStatis>();
+
+                DateTime dateNow = DateTime.ParseExact(date1, "dd/MM/yyyy", null);
+                DateTime dateReservaTable = DateTime.ParseExact(date2, "dd/MM/yyyy", null);
+
+                TimeSpan Time = dateReservaTable - dateNow ;
+                int TongSoNgay = Time.Days;
+
+                for(int i = 1; i <= TongSoNgay+1; i++)
+                {
+                    string[] dateCurrent = dateNow.ToString("dd/MM/yyyy").Split(" ");
+                    string[] temp = dateCurrent[0].Split("/");
+
+                    getStatistics.Add(getStatisticWithDate(reserveTables, temp[0], temp[1], temp[2]));
+                    dateNow = dateNow.AddDays(1);
+                }
+
+
+                return getStatistics;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        private Object.Get.GetStatis getStatisticWithDate(IEnumerable<Database.ReserveTable> reserveTables, string day, string month, string year)
+        {
+            List<Database.ReserveTable> reserveTables1 = new List<ReserveTable>();
+            foreach (var item in reserveTables)
+            {
+                if (Other.Date.checkDate(item.Day, day, month, year) == true)
+                {
+                    reserveTables1.Add(item);
+                }
+            }
+
+            Object.Get.GetStatis getStatis = new Object.Get.GetStatis();
+
+            getStatis.time = day+"/"+month+"/"+year;
+            getStatis.amountComplete = reserveTables1.Where(t => t.Status == 4).Count() + "";
+            getStatis.amountExpired = reserveTables1.Where(t => t.Status == 2).Count() + "";
+
+            return getStatis;
+        }
+
         public List<Object.Get.GetStatis> getStatis(string restaurantId, string month1, string year1, string month2, string year2)
         {
             try
@@ -113,7 +166,7 @@ namespace API_DACN.Model
                 getStatis.time = year;
             }
             getStatis.amountComplete = reserveTables1.Where(t => t.Status == 4).Count() + "";
-            getStatis.amountExpired = reserveTables1.Where(t => t.Status == 3).Count() + "";
+            getStatis.amountExpired = reserveTables1.Where(t => t.Status == 2).Count() + "";
 
             return getStatis;
         }
@@ -356,6 +409,7 @@ namespace API_DACN.Model
                                         select a).Count();
 
                 resDetail.status = db.Restaurants.Find(restaurantId).Status;
+                resDetail.statusCo = db.Restaurants.Find(restaurantId).StatusCo;
 
                 return resDetail;
             }
@@ -365,12 +419,43 @@ namespace API_DACN.Model
             }
         }
 
+        public string getStatisticResWithUser(string restaurantId, string toDay)
+        {
+            try
+            {
+                Object.Get.getResDetail resDetail = new Object.Get.getResDetail();
+
+                return  (from a in db.ReserveTables
+                        where a.RestaurantId == restaurantId && a.Time.Contains(toDay)
+                        select a).Count().ToString();
+            }
+            catch
+            {
+                return "null";
+            }
+        }
+
         public bool changeStatus(string restaurantId, bool status)
         {
             try
             {
                 var res = db.Restaurants.Find(restaurantId);
                 res.Status = status;
+                db.SaveChanges();
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool changeStatusCo(string restaurantId, string statusCo)
+        {
+            try
+            {
+                var res = db.Restaurants.Find(restaurantId);
+                res.StatusCo = statusCo;
                 db.SaveChanges();
             }
             catch
@@ -474,7 +559,7 @@ namespace API_DACN.Model
                                  pic = GetImage.getImageWithRes(restaurantId, db),
                                  categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()), 
                                  promotionRes = (from c in db.Promotions
-                                                where c.RestaurantId == a.Id
+                                                where c.RestaurantId == a.Id && c.Status == true
                                                 select new Object.Get.GetPromotion_Res()
                                                 {
                                                     id = c.Id,
@@ -524,7 +609,7 @@ namespace API_DACN.Model
                                  pic = GetImage.getImageWithRes(a.RestaurantId, db),
                                  categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.RestaurantId).Select(c => c.Category.Name).ToList()),
                                  promotionRes = (from c in db.Promotions
-                                                where c.RestaurantId == a.RestaurantId
+                                                where c.RestaurantId == a.RestaurantId && c.Status == true
                                                 select new Object.Get.GetPromotion_Res()
                                                 {
                                                     id = c.Id,
@@ -573,8 +658,8 @@ namespace API_DACN.Model
                                  pic = GetImage.getImageWithRes(a.Id, db),
                                  categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
                                  promotionRes = (from c in db.Promotions
-                                                where c.RestaurantId == a.Id
-                                                select new Object.Get.GetPromotion_Res()
+                                                where c.RestaurantId == a.Id && c.Status == true
+                                                 select new Object.Get.GetPromotion_Res()
                                                 {
                                                     id = c.Id,
                                                     name = c.Name,
@@ -620,6 +705,24 @@ namespace API_DACN.Model
         public string getQuantityReserveTable(string restaurantId, int code)
         {
             try { 
+                if(code == 0 || code == 1)
+                {
+                    var result = from reserveTable in db.ReserveTables
+                            where reserveTable.RestaurantId == restaurantId && reserveTable.Status == code
+                            select reserveTable;
+
+                    int count = 0;
+
+                    foreach(var item in result) {
+                        if (checkDate(item.Day))
+                        {
+                            count++;
+                        }
+                    }
+
+                    return count.ToString();
+                }
+
                 return (from reserveTable in db.ReserveTables
                         where reserveTable.RestaurantId == restaurantId && reserveTable.Status == code
                         select reserveTable).Count().ToString();
@@ -628,6 +731,27 @@ namespace API_DACN.Model
             {
                 return "null";
             }     
+        }
+
+        private bool checkDate(string date)
+        {
+            int day = DateTime.Now.Day;
+            int month = DateTime.Now.Month;
+            int year = DateTime.Now.Year;
+
+            string[] time = date.Split("-");
+
+            DateTime dateNow = DateTime.ParseExact(day + "/" + month + "/" + year, "dd/MM/yyyy", null);
+            DateTime dateReservaTable = DateTime.ParseExact(time[2] + "/" + time[1] + "/" + time[0], "dd/MM/yyyy", null);
+
+            TimeSpan Time = dateNow - dateReservaTable;
+            int TongSoNgay = Time.Days;
+
+            if (TongSoNgay >= 0)
+            {
+                return true;
+            }
+            return false;
         }
 
         public bool updateReserveTable(string reserveTableId, int code)
@@ -646,6 +770,69 @@ namespace API_DACN.Model
                 return false;
             }
         }
+
+        //------------------------------search-----------------------------------
+        public IEnumerable<Object.Get.GetReserveTable1> getReserveTableWithKey(string restaurantId, string key)
+        {
+            try
+            {
+                var result = from a in db.ReserveTables
+                             where a.RestaurantId == restaurantId 
+                             select new Object.Get.GetReserveTable1()
+                             {
+                                 restaurantId = a.RestaurantId,
+                                 quantity = a.QuantityPeople,
+                                 time = a.Time,
+                                 reserveTableId = a.Id,
+                                 promotionId = a.PromotionId,
+                                 name = a.Name,
+                                 phone = a.PhoneNumber,
+                                 note = a.Note,
+                                 userId = a.UserId,
+                                 status = a.Status
+                             };
+
+                var reserveTable = from a in result
+                                   where a.name.ToLower().Contains(key.ToLower())
+                                   select a;
+
+                if(reserveTable.Count() == 0)
+                {
+                    List<Object.Get.GetReserveTable1> getReserveTables = new List<Object.Get.GetReserveTable1>();
+
+                    foreach(var item in result)
+                    {
+                        if(checkPhone(item.phone, key))
+                        {
+                            getReserveTables.Add(item);
+                        }
+                    }
+
+                    return getReserveTables;
+                }
+
+                return reserveTable;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public bool checkPhone(string phone, string key)
+        {
+            for(int i = 0; i < key.Length; i++)
+            {
+                string charKey = key[key.Length - 1 - i].ToString();
+                string charPhone = phone[phone.Length - 1 - i].ToString();
+                if (!charKey.Equals(charPhone))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
 
         //------------------------------menu-----------------------------------
         public string CreateMenu(Object.Input.InputMenu menu)
