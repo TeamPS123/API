@@ -321,6 +321,57 @@ namespace API_DACN.Model
             }
         }
 
+        public Object.Get.GetReview getReview(int reviewId)
+        {
+            try
+            {
+                var result = (from a in db.Reviews
+                              where a.Id == reviewId
+                              select new Object.Get.GetReview()
+                              {
+                                  Id = a.Id,
+                                  content = a.Content,
+                                  value = a.Value,
+                                  UserId = a.UserId,
+                                  RestaurantId = a.RestaurantId,
+                                  imageRes = db.Images.Where(t => t.FoodId == "0" && t.RestaurantId == a.RestaurantId).Select(c => c.Link).FirstOrDefault(),
+                                  date = a.Date,
+                                  UserName = db.Users.Where(t => t.Id == a.UserId).Select(c => c.FullName).FirstOrDefault(),
+                                  countLike = a.CountLike,
+                                  imageUser = db.Images.Where(t => t.UserId == a.UserId && t.RestaurantId == "0").Select(c => c.Link).FirstOrDefault(),
+                                  imgList = db.Images.Where(t => t.ReviewId == a.Id).Select(c => c.Link).ToList(),
+                                  userList = (from b in db.UserLikes
+                                              where b.ReviewId == a.Id && b.Status == true
+                                              select new Object.Get.GetLike()
+                                              {
+                                                  userId = b.UserId,
+                                                  name = b.User.FullName
+                                              }).ToList(),
+                                  comments = (from c in db.UserComments
+                                              where c.ReviewId == a.Id
+                                              orderby c.Id descending
+                                              select new Object.Get.GetComment()
+                                              {
+                                                  name = c.User.FullName,
+                                                  imgUser = db.Images.Where(t => t.UserId == c.UserId && t.RestaurantId == "0").Select(c => c.Link).FirstOrDefault(),
+                                                  content = c.Content,
+                                                  date = c.Date,
+                                              }).ToList()
+                              }).FirstOrDefault();
+
+                //if (value != -1)
+                //{
+                //    result = result.Where(t => t.value == value);
+                //}
+
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public string reviewTotal()
         {
             try
@@ -557,6 +608,7 @@ namespace API_DACN.Model
                                  statusCO = a.StatusCo,
                                  mainPic = db.Images.Where(t => t.RestaurantId == restaurantId && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                                  pic = GetImage.getImageWithRes(restaurantId, db),
+                                 countRate = db.Rates.Where(t => t.RestaurantId == a.Id).Count() + "",
                                  categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()), 
                                  promotionRes = (from c in db.Promotions
                                                 where c.RestaurantId == a.Id && c.Status == true
@@ -607,6 +659,7 @@ namespace API_DACN.Model
                                  statusCO = a.Restaurant.StatusCo,
                                  mainPic = db.Images.Where(t => t.RestaurantId == a.RestaurantId && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                                  pic = GetImage.getImageWithRes(a.RestaurantId, db),
+                                 countRate = db.Rates.Where(t => t.RestaurantId == a.RestaurantId).Count() + "",
                                  categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.RestaurantId).Select(c => c.Category.Name).ToList()),
                                  promotionRes = (from c in db.Promotions
                                                 where c.RestaurantId == a.RestaurantId && c.Status == true
@@ -656,6 +709,7 @@ namespace API_DACN.Model
                                  statusCO = a.StatusCo,
                                  mainPic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
                                  pic = GetImage.getImageWithRes(a.Id, db),
+                                 countRate = db.Rates.Where(t => t.RestaurantId == a.Id).Count() + "",
                                  categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
                                  promotionRes = (from c in db.Promotions
                                                 where c.RestaurantId == a.Id && c.Status == true
@@ -832,7 +886,6 @@ namespace API_DACN.Model
             }
             return true;
         }
-
 
         //------------------------------menu-----------------------------------
         public string CreateMenu(Object.Input.InputMenu menu)
@@ -1177,6 +1230,7 @@ namespace API_DACN.Model
             return true;
         }
 
+        //------------------------------reserveTable-----------------------------------
         public IEnumerable<Object.Get.FoodOfMenu> getFoodsByResId(string reserveTableId)
         {
             try
@@ -1193,6 +1247,7 @@ namespace API_DACN.Model
                                  categoryId = a.Food.CategoryId,
                                  categoryName = a.Food.Category.Name,
                                  status = a.Food.Status,
+                                 quantity = a.Quantity,
                                  pic = (List<string>)(from c in db.Images
                                                       where c.FoodId == a.Food.Id
                                                       select c.Link)
@@ -1232,6 +1287,38 @@ namespace API_DACN.Model
             {
                 return null;
             }
+        }
+
+        public bool delFoodOfRes(string reserveTableId, string foodId)
+        {
+            try
+            {
+                var reserveFood = db.ReserveFoods.Where(t => t.FoodId == foodId && t.ReserveTable == reserveTableId).FirstOrDefault();
+
+                db.ReserveFoods.Remove(reserveFood);
+                db.SaveChanges();
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool updateQuantity(string reserveTableId, string foodId, int quantity)
+        {
+            try
+            {
+                var reserveFood = db.ReserveFoods.Where(t => t.FoodId == foodId && t.ReserveTable == reserveTableId).FirstOrDefault();
+
+                reserveFood.Quantity = quantity;
+                db.SaveChanges();
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
         }
 
         //------------------------------promotion-----------------------------------

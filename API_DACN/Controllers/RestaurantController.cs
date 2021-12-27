@@ -382,7 +382,41 @@ namespace API_DACN.Controllers
             return Ok(new Object.Get.Message_ReserveTableDetail(1, "Thêm loại thức ăn thành công", add));
         }
 
-//-------------------------------------------food-----------------------------------
+        [Route("delFoodOfRes")]
+        [HttpGet]
+        public IActionResult delFoodOfRes(string userId, string reserveTableId, string foodId)
+        {
+            if (Token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+
+            var add = res_model.delFoodOfRes(reserveTableId, foodId);
+            if (!add)
+            {
+                return Ok(new Object.Message(0, "Xóa thức ăn đặt thất bại", null));
+            }
+            return Ok(new Object.Message(1, "Xóa thức ăn đặt thành công", null));
+        }
+
+        [Route("updateQuantity")]
+        [HttpGet]
+        public IActionResult updateQuantity(string userId, string reserveTableId, string foodId, int quantity)
+        {
+            if (Token.GetPhoneWithToken(Request.Headers) != userId)
+            {
+                return Ok(new Object.Message(2, "Kiểm tra lại token tý nào", null));
+            }
+
+            var add = res_model.updateQuantity(reserveTableId, foodId, quantity);
+            if (!add)
+            {
+                return Ok(new Object.Message(0, "Cạp nhật thức ăn đặt thất bại", null));
+            }
+            return Ok(new Object.Message(1, "Cập nhật thức ăn đặt thành công", null));
+        }
+
+        //-------------------------------------------food-----------------------------------
         [Route("addFoods")]
         [HttpPost]
         public IActionResult AddFoods(Object.Input.InputFood menu)

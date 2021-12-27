@@ -19,6 +19,7 @@ namespace API_DACN.Object.Get
         public string name { get; set; }
         public double price { get; set; }
         public string unit { get; set; }
+        public int quantity { get; set; }
         public string categoryName { get; set; }
         public string categoryId { get; set; }
         public bool ? status { get; set; }

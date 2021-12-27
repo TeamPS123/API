@@ -1,7 +1,9 @@
 ﻿using API_DACN.Database;
+using API_DACN.Model.ViewModel;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -71,5 +73,21 @@ namespace API_DACN.Other
             var nextIdViewModel = db.NextIdViewModel.FromSqlRaw(query).AsEnumerable().FirstOrDefault();
             return nextIdViewModel.NextId;
         }
+
+        public void temp(string key, int quantity)
+        {
+            string query = "EXEC dbo.Search @strFind = 'com',  @quantity = 20 ";
+            var nextIdViewModel = db.searchSql.FromSqlRaw(query).AsEnumerable();
+            //var userType = db.Set<NextIdViewModel>().FromSqlRaw(query).AsEnumerable();
+            //var h = nextIdViewModel.Count();
+            string t = "";
+        }
+    }
+
+    public class searchSql
+    {
+        [Key]
+        public string id { get; set; }
+        public string Rank { get; set; }
     }
 }

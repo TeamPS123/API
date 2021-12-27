@@ -8,9 +8,8 @@ namespace API_DACN.Controllers
 {
     public class ShareController : Controller
     {
-        public IActionResult Code(int id)
+        public IActionResult Code(int code)
         {
-            ViewBag.code = id;
             return View();
         }
     }

@@ -91,4 +91,25 @@ namespace API_DACN.Object.Get
         public GetCountRating CountRating { get => countRating; set => countRating = value; }
         public IEnumerable<GetReview> Reviews { get => reviews; set => reviews = value; }
     }
+
+    public class Message_Review1
+    {
+        private int status;
+        private string notification;
+        private string reviewTotal;
+        private GetReview review;
+
+        public Message_Review1(int status, string notification, string reviewTotal, GetReview review)
+        {
+            this.status = status;
+            this.notification = notification;
+            this.reviewTotal = reviewTotal;
+            this.review = review;
+        }
+
+        public int Status { get => status; set => status = value; }
+        public string Notification { get => notification; set => notification = value; }
+        public string ReviewTotal { get => reviewTotal; set => reviewTotal = value; }
+        public GetReview Review { get => review; set => review = value; }
+    }
 }

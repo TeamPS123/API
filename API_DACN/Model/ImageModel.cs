@@ -11,13 +11,13 @@ namespace API_DACN.Model
     {
         private readonly food_location_dbContext db;
         private NextId setId;
-        private string domain = "https://ps.covid21tsp.space/Picture/"; 
+        private string domain = "https://pamle.pro/Picture/"; 
 
         public ImageModel(food_location_dbContext db)
         {
             this.db = db;
             setId = new NextId(db);
-            domain = "https://ps.covid21tsp.space/Picture/";
+            domain = "https://pamle.pro/Picture/";
         }
 
         //public void AddImage(string filename, string foodId, string restaurantId, string userId, string categoryId)

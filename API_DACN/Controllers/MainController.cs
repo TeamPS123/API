@@ -16,11 +16,13 @@ namespace API_DACN.Controllers
         private RestaurantModel model;
         private SearchModel modelSearch;
         private UserModel userModel;
+        food_location_dbContext db;
 
         public MainController(food_location_dbContext db)
         {
             model = new RestaurantModel(db);
             userModel = new UserModel(db);
+            this.db = db;
         }
 
         [HttpGet]
@@ -200,6 +202,22 @@ namespace API_DACN.Controllers
         }
 
         [HttpGet]
+        [Route("getReview")]
+        public IActionResult getReviewRes(int reviewId)
+        {
+            var reviews = model.getReview(reviewId);
+
+            if (reviews == null)
+            {
+                return Ok(new Object.Get.Message_Review1(0, "Lấy dữ liệu thất bại", "0", null));
+            }
+
+            var rateTotal = model.reviewTotal();
+            var count = model.getCountReview();
+            return Ok(new Object.Get.Message_Review1(1, "Lấy dữ liệu thành công", "", reviews));
+        }
+
+        [HttpGet]
         [Route("getLikeAndComment")]
         public IActionResult getLikeAndComment(int reviewId, int skip, int take)
         {
@@ -227,5 +245,14 @@ namespace API_DACN.Controllers
             return Ok(new Object.Message(1, "Lấy dữ liệu thành công", result));
         }
 
+
+        [HttpGet]
+        [Route("tampthuinha")]
+        public IActionResult ttttt()
+        {
+            Other.NextId t = new Other.NextId(db);
+            t.temp("com", 20);
+            return Ok(0);
+        }
     }
 }

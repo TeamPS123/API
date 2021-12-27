@@ -26,6 +26,7 @@ namespace API_DACN.Object.Get
         public string rateTotal { get; set; }
         public int countType { get; set; }
         public int type { get; set; } // 1: loại thường dùng || 2: loại hot || 3: loại thường
+        public string countRate { get; set; }
         public List<GetPromotion_Res> promotionRes { get; set; }
         public List<GetCategoryRes> categoryRes { get; set; }
     }

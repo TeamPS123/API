@@ -10,7 +10,7 @@ namespace API_DACN.Controllers
     {
         public IActionResult Code(int code)
         {
-            return View(code);
+            return View();
         }
     }
 }

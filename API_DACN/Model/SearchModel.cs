@@ -226,29 +226,27 @@ namespace API_DACN.Model
                 if (name != "")
                 {
                     // Search category name. if data is null, will search food name
-                    //data = (from b in db.Foods
-                    //       where b.Category.KeyWord.ToUpper().Contains(name.ToUpper())
-                    //       select b.Menu.Restaurant).ToList();
+                    data = (from b in db.Foods
+                            where b.Category.KeyWord.ToUpper().Contains(name.ToUpper())
+                            select b.Menu.Restaurant).ToList();
 
-                    data = fuzzy.SearchFood(name, foodList, 0.20);
+                    //data = fuzzy.SearchFood(name, foodList, 0.20);
 
 
                     if (data.Count() == 0)
                     {
-                        //data = (from c in db.Foods
-                        //       where c.KeyWord.ToUpper().Contains(name.ToUpper())
-                        //       select c.Menu.Restaurant).ToList();
-
-                       
+                        data = (from c in db.Foods
+                                where c.KeyWord.ToUpper().Contains(name.ToUpper())
+                                select c.Menu.Restaurant).ToList();
                     }
 
                     if(data.Count() == 0)
                     {
-                        //data = (from c in db.Restaurants
-                        //        where c.Name.ToUpper().Contains(key.ToUpper())
-                        //        select c).ToList();
+                        data = (from c in db.Restaurants
+                                where c.Name.ToUpper().Contains(key.ToUpper())
+                                select c).ToList();
 
-                        data = fuzzy.SearchRes(key.ToUpper(), resList, 0.15);
+                        //data = fuzzy.SearchRes(key.ToUpper(), resList, 0.15);
                     }
 
                     if (districtList.Count() > 0 && data.Count() > 0)
@@ -327,6 +325,7 @@ namespace API_DACN.Model
                                pic = GetImage.getImageWithRes(a.Id, db),
                                rateTotal = res_model.rateTotal(a.Id),
                                categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
+                               countRate = db.Rates.Where(t => t.RestaurantId == a.Id).Count()+"",
                                promotionRes = (from c in db.Promotions
                                               where c.RestaurantId == a.Id && c.Status == true
                                                select new Object.Get.GetPromotion_Res()
@@ -570,8 +569,8 @@ namespace API_DACN.Model
             try
             {
                 //int rangeDay = 10; //static reserveTable in 10 day
-                //int countRequest = 5; // amount reserveTable request in rangeDay with user
-                //int countRequest_Res = 10; // amount reserTable request in rangeDat with restaurant
+                int countRequest = 1; // amount reserveTable request in rangeDay with user
+                int countRequest_Res = 1; // amount reserTable request in rangeDat with restaurant
 
                 //Search restaurant in the range
                 var data = db.Restaurants;
@@ -609,11 +608,11 @@ namespace API_DACN.Model
                         }
                     }
 
-                    //if (count > countRequest)
-                    //{
+                    if (count > countRequest)
+                    {
                         item.countType = count;
                         item.type = 1;
-                    //}
+                    }
                 }
 
                 //Fitter restaurnt hot in rangeDay
@@ -632,11 +631,11 @@ namespace API_DACN.Model
                             }
                         }
 
-                        //if (count > countRequest_Res)
-                        //{
+                        if (count > countRequest_Res)
+                        {
                             item.countType = count;
                             item.type = 2;
-                        //}
+                        }
                     }
                 }
 
@@ -770,6 +769,7 @@ namespace API_DACN.Model
                 rateTotal = res_model.rateTotal(item.Id),
                 countType = 0,
                 type = 3,
+                countRate = db.Rates.Where(t => t.RestaurantId == item.Id).Count() + "",
                 categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == item.Id).Select(c => c.Category.Name).ToList()),
                 promotionRes = (from c in db.Promotions
                                where c.RestaurantId == item.Id && c.Status == true
