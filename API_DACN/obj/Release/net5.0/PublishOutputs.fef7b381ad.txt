@@ -5,6 +5,8 @@ C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\appse
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\API_DACN.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\API_DACN.runtimeconfig.json
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\API_DACN.pdb
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\EntityFramework.SqlServer.dll
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\EntityFramework.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\Humanizer.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\Microsoft.AspNetCore.Razor.Language.dll
@@ -45,12 +47,14 @@ C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\ICSha
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\System.CodeDom.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\System.Composition.AttributedModel.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\System.Composition.Convention.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\System.Composition.Hosting.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\System.Composition.Runtime.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\System.Composition.TypedParts.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\System.Configuration.ConfigurationManager.dll
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\System.Data.SqlClient.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\System.Diagnostics.DiagnosticSource.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\System.Runtime.Caching.dll
@@ -119,6 +123,11 @@ C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\runti
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.pdb
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\runtimes\win-arm\lib\net5.0\dotnet-aspnet-codegenerator-design.exe
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\runtimes\win-arm64\lib\net5.0\dotnet-aspnet-codegenerator-design.exe
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\runtimes\win-arm64\native\sni.dll
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\runtimes\win-x64\native\sni.dll
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\runtimes\win-x86\native\sni.dll
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\xyzsy\OneDrive\Desktop\API\API_DACN\obj\Release\net5.0\PubTmp\Out\API_DACN.Views.dll

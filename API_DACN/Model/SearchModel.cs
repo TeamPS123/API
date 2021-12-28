@@ -1,5 +1,6 @@
 ﻿using API_DACN.Database;
 using API_DACN.Other;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,13 @@ namespace API_DACN.Model
     {
         private readonly food_location_dbContext db;
         private RestaurantModel res_model;
+        private Other.NextId next;
 
         public SearchModel(food_location_dbContext db)
         {
             this.db = db;
             res_model = new RestaurantModel(db);
+            next = new NextId(db);
         }
 
         //Restaurant list distance <= 5km
@@ -365,6 +368,181 @@ namespace API_DACN.Model
             }
         }
 
+        public IEnumerable<Object.Get.GetRestaurant> resListSupperSearch1(List<int> catelogyList, List<string> districtList, string key, LngLat lngLat, int distance)
+        {
+            try
+            {
+                string name = Regex1.RemoveUnicode(key);
+
+                FuzzySearch fuzzy = new FuzzySearch(db);
+
+                //IEnumerable<Restaurant> data = null;
+                List<Restaurant> data = new List<Restaurant>();
+
+                var resList = db.Restaurants.ToList();
+                var foodList = db.Foods.ToList();
+
+                if (name != "")
+                {
+                    var search = next.temp(key, 20);
+
+                    search = search.GroupBy(t => t.id).Select(c => c.FirstOrDefault());
+
+                    search = search.Where(t => t.Rank > 0);
+
+                    //search = search.OrderByDescending(t => t.Rank);
+
+                    if(search.Count() > 0)
+                    {
+                        foreach(var item in search)
+                        {
+                            data.Add((from a in db.Restaurants
+                                      where a.Id == item.id
+                                      select a).FirstOrDefault());
+                        }
+                    }
+
+                    //data = (from a in db.Restaurants
+                    //        where search.Select(c => c.id).Contains(a.Id) == true
+                    //        select a).ToList();
+
+                    if (districtList.Count() > 0 && data.Count() > 0)
+                    {
+                        //Search by districtList when data is not null
+                        data = (from a in data
+                                where districtList.Contains(a.District) == true
+                                select a).ToList();
+                    }
+                }
+                else if (districtList.Count() > 0)
+                {
+                    //Search by districtList when data is null
+                    data = (from a in db.Restaurants
+                            where districtList.Contains(a.District) == true
+                            select a).ToList();
+                }
+
+                if (name == "" && districtList.Count() == 0)
+                {
+                    if (catelogyList.Count() > 0)
+                    {
+                        //Search by categoryResList when name is null
+                        data = (from a in db.RestaurantDetails
+                                where catelogyList.Contains(a.CategoryId) == true
+                                select a.Restaurant).ToList();
+                    }
+                }
+                else
+                {
+                    if (catelogyList.Count() > 0 && data.Count() > 0)
+                    {
+                        var resDetails = from a in db.RestaurantDetails
+                                         where data.Select(t => t.Id).Contains(a.RestaurantId) == true
+                                         select a;
+
+                        //Search by categoryResList when name is not null
+                        data = (from a in resDetails
+                                where catelogyList.Contains(a.CategoryId) == true
+                                select a.Restaurant).ToList();
+
+                    }
+                }
+
+                if (data.Count() == 0)
+                {
+                    return null;
+                }
+
+                //if (data.Count() > 1)
+                //{
+                //    data = (from m in data
+                //            group m by m.Id into g
+                //            select g.FirstOrDefault()).ToList();
+                //}
+
+                if (lngLat.Latitude == 0)
+                {
+                    return from a in data
+                           select new Object.Get.GetRestaurant()
+                           {
+                               userId = a.UserId,
+                               restaurantId = a.Id,
+                               name = a.Name,
+                               line = a.Line,
+                               city = a.City,
+                               district = a.District,
+                               longLat = a.LongLat,
+                               openTime = a.OpenTime,
+                               closeTime = a.CloseTime,
+                               distance = "Không xác định",
+                               phoneRes = a.PhoneRestaurant,
+                               status = a.Status,
+                               statusCO = a.StatusCo,
+                               mainPic = db.Images.Where(t => t.RestaurantId == a.Id && t.FoodId == "0").Select(c => c.Link).FirstOrDefault(),
+                               pic = GetImage.getImageWithRes(a.Id, db),
+                               rateTotal = res_model.rateTotal(a.Id),
+                               categoryResStr = Other.Convert.ConvertListToString(db.RestaurantDetails.Where(t => t.RestaurantId == a.Id).Select(c => c.Category.Name).ToList()),
+                               countRate = db.Rates.Where(t => t.RestaurantId == a.Id).Count() + "",
+                               promotionRes = (from c in db.Promotions
+                                               where c.RestaurantId == a.Id && c.Status == true
+                                               select new Object.Get.GetPromotion_Res()
+                                               {
+                                                   id = c.Id,
+                                                   name = c.Name,
+                                                   info = c.Info,
+                                                   value = c.Value
+                                               }).ToList(),
+                               categoryRes = (from b in db.RestaurantDetails
+                                              where b.RestaurantId == a.Id
+                                              select new Object.Get.GetCategoryRes()
+                                              {
+                                                  id = b.CategoryId,
+                                                  name = b.Category.Name,
+                                                  icon = b.Category.Icon
+                                              }).ToList()
+                           };
+                }
+
+                List<Object.Get.GetRestaurant> restaurants = new List<Object.Get.GetRestaurant>();
+
+                foreach (var item in data)
+                {
+                    double distance1 = Distance.distance(item.LongLat, lngLat);
+                    if(distance != 0) { 
+                        if (distance1 <= distance)
+                        {
+                            restaurants.Add(objectRes(item, distance1.ToString()));
+                        }
+                    }
+                    else
+                    {
+                        restaurants.Add(objectRes(item, distance1.ToString()));
+                    }
+                }
+
+                if (distance == 1)
+                {
+                    IEnumerable<Object.Get.GetRestaurant>  result = from a in restaurants
+                                orderby a.distance descending
+                                select a;
+
+                    return result.ToList();
+                }
+
+                return restaurants;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        //private IEnumerable<Search> seachOfSql(string key, int quantity)
+        //{
+        //    string query = "EXEC dbo.Search @strFind = '" + key + "',  @quantity = " + quantity;
+        //    return db.searchSql.FromSqlRaw(query).AsEnumerable();
+        //}
+
         //Restaurant list with categoryRes List
         public IEnumerable<Object.Get.GetRestaurant> resResWithCategorys(List<int> categoryResList, LngLat lngLat)
         {
@@ -665,7 +843,16 @@ namespace API_DACN.Model
             string[] time = date.Split("-");
 
             DateTime dateNow = DateTime.ParseExact(day + "/" + month + "/" + year, "dd/MM/yyyy", null);
-            DateTime dateReservaTable = DateTime.ParseExact(time[2] + "/" + time[1] + "/" + time[0], "dd/MM/yyyy", null); 
+            DateTime dateReservaTable; 
+            
+            try
+            {
+                dateReservaTable = DateTime.ParseExact(time[2]+"/"+time[1]+"/"+time[0], "dd/MM/yyyy", null);
+            }
+            catch
+            {
+                dateReservaTable = DateTime.ParseExact(date, "dd/MM/yyyy", null);
+            }
 
             TimeSpan Time = dateNow - dateReservaTable;
             int TongSoNgay = Time.Days;

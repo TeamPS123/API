@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Entity.Infrastructure;
 using API_DACN.Model.ViewModel;
 using API_DACN.Other;
 using Microsoft.EntityFrameworkCore;
@@ -33,8 +32,7 @@ namespace API_DACN.Database
         public virtual DbSet<UserComment> UserComments { get; set; }
         public virtual DbSet<UserLike> UserLikes { get; set; }
         public DbSet<NextIdViewModel> NextIdViewModel { get; set; }
-        public DbSet<searchSql> searchSql { get; set; }
-        public DbQuery<searchSql> searchSqls { get; set; }
+        public DbSet<Search> searchSql { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

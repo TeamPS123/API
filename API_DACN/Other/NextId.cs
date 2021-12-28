@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -74,20 +75,17 @@ namespace API_DACN.Other
             return nextIdViewModel.NextId;
         }
 
-        public void temp(string key, int quantity)
+        public IEnumerable<Search> temp(string key, int quantity)
         {
-            string query = "EXEC dbo.Search @strFind = 'com',  @quantity = 20 ";
-            var nextIdViewModel = db.searchSql.FromSqlRaw(query).AsEnumerable();
-            //var userType = db.Set<NextIdViewModel>().FromSqlRaw(query).AsEnumerable();
-            //var h = nextIdViewModel.Count();
-            string t = "";
+            string query = "EXEC dbo.Search @strFind = N'"+key+"',  @quantity = "+quantity;
+            var result = db.searchSql.FromSqlRaw(query).AsEnumerable();
+            return result;
         }
     }
 
-    public class searchSql
+    public class Search
     {
-        [Key]
         public string id { get; set; }
-        public string Rank { get; set; }
+        public int Rank { get; set; }
     }
 }

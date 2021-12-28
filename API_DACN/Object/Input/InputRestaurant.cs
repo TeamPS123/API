@@ -54,6 +54,7 @@ namespace API_DACN.Object.Input
         public string name { get; set; }
         public double lon { get; set; }
         public double lat { get; set; }
+        public int distance { get; set; }
     }
 
     public class InputRes_CategoryList

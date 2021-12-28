@@ -246,13 +246,13 @@ namespace API_DACN.Controllers
         }
 
 
-        [HttpGet]
-        [Route("tampthuinha")]
-        public IActionResult ttttt()
-        {
-            Other.NextId t = new Other.NextId(db);
-            t.temp("com", 20);
-            return Ok(0);
-        }
+        //[HttpGet]
+        //[Route("tampthuinha")]
+        //public IActionResult ttttt()
+        //{
+        //    Other.NextId t = new Other.NextId(db);
+        //    t.temp("com", 20);
+        //    return Ok(0);
+        //}
     }
 }

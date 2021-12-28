@@ -77,7 +77,7 @@ namespace API_DACN.Controllers
         [Route("getResWithSupperSearch")]
         public IActionResult resListSupperSearch(Object.Input.InputRes_Search input)
         {
-            var result = model.resListSupperSearch(input.catelogyList, input.districtList,input.name, new Other.LngLat(input.lon, input.lat));
+            var result = model.resListSupperSearch1(input.catelogyList, input.districtList,input.name, new Other.LngLat(input.lon, input.lat), input.distance);
 
             if (result == null)
             {
